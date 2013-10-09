@@ -62,7 +62,7 @@ begin
 
 	-- on continue en initialisant l'affichage
 	for I in cmap'Range loop
-		cmap(I) := (Uint8(I), 0, 0, 0);
+		cmap(I) := (Uint8(I), Uint8(I), Uint8(I), 0);
 	end loop;
 
 	if SDL.Init (SDL.INIT_VIDEO) < 0 then
@@ -142,6 +142,7 @@ begin
 				end if;
 			end loop;
 
+			Vd.FillRect(screen, null, 0);
 			if Vd.LockSurface(screen) < 0 then
 				Put("erreur lors du lock de la surface");
 			end if;
