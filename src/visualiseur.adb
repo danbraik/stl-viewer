@@ -48,6 +48,8 @@ procedure Visualiseur is
 	use Interfaces;
 	use type C.int;
 
+	i : Integer := 0;
+
 begin
 
 	-- on commence par charger le maillage
@@ -62,7 +64,7 @@ begin
 
 	-- on continue en initialisant l'affichage
 	for I in cmap'Range loop
-		cmap(I) := (Uint8(I), 0, 0, 0);
+		cmap(I) := (Uint8(I), Uint8(I), Uint8(I), 0);
 	end loop;
 
 	if SDL.Init (SDL.INIT_VIDEO) < 0 then
@@ -145,7 +147,8 @@ begin
 			if Vd.LockSurface(screen) < 0 then
 				Put("erreur lors du lock de la surface");
 			end if;
-			Calcul_Image;
+			Calcul_Image(i);
+			i := i+10;
 			Vd.UnlockSurface(screen);
 			Vd.Flip (screen); -- dessin a l'ecran
 
