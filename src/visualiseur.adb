@@ -144,6 +144,7 @@ begin
 				end if;
 			end loop;
 
+            Vd.FillRect(screen, null, 0); 
 			if Vd.LockSurface(screen) < 0 then
 				Put("erreur lors du lock de la surface");
 			end if;
