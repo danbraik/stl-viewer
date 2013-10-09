@@ -16,9 +16,8 @@ package body Frame is
 	begin
 		-- a faire : calcul des projections, affichage des triangles
 		null;
-		Put(i); New_Line;	
-		for J in 1..(i mod 600) loop
-			Fixe_Pixel(J,J, Uint8(i mod 256));
+		for J in 1..500 loop
+			Fixe_Pixel(i mod 500+1, J, Uint8(i mod 256));
 		end loop;
 	end;
 
