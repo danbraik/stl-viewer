@@ -8,6 +8,7 @@ with Ada.Strings.Fixed;
 with Ada.Strings.Maps;
 with Ada.Strings.Unbounded;
 use Ada.Strings.Unbounded;
+with Ada.Sequential_IO;
 
 
 package body STL is
@@ -24,7 +25,7 @@ package body STL is
 	end record;
 
 
-
+	-- Could raise exception if a word is larger than 128 bytes
 	function Get_Next_Word(F : File_Type) return String is
 		BufferInput : String(1..128);
 		Char : Character;
@@ -36,6 +37,7 @@ package body STL is
 			if Char /= Character'Val(32) 
 				and Char /= Character'Val(9) 
 				and Char /= Character'Val(10) then
+				-- don't check index to have performance
 				BufferInput(Index) := Char;
 				Index := Index + 1;
 			elsif Index > 1 then
@@ -59,7 +61,7 @@ package body STL is
 				Vertex_3
 				);
 		Current : State := Main;
-		F : File_Type;
+		F : Ada.Text_IO.File_Type;
         NouvelleFace : Acc_TFacette;
 	begin
 
@@ -112,27 +114,75 @@ package body STL is
 	end;
 
 
+	procedure Chargement_Bin(Nom_Fichier : String; M : out Maillage) is
+		--F : Seq_IO.File_Type;
+		F : File_Type;
+		Buffer : array (1..80) of Byte;
+		NbElt : Integer;
+	begin
+		Open(F, In_File, Nom_Fichier);
+		
+		For i in Buffer'Range loop
+			Get(F, Buffer(i));
+		end loop;
+
+		Read(NbElt);
+		Put(NbElt);
+		New_Line;
+
+		Close(F);
+	end;
+
+
+	function GetFileMode(Fname : String) return Natural is
+		F : File_Type;
+		Res : Natural;
+		Buffer : String(1..5);
+	begin
+		
+		Open(F, In_File, Fname);
+		For i in Buffer'Range loop
+			Get(F, Buffer(i));
+		end loop;
+
+		if Buffer = "solid" then
+			Res := 0;
+		else
+			Res := 1;
+		end if;
+		Close(F);
+		return Res;
+	end;
 
 	function Chargement(Nom_Fichier : String) return Maillage is
 		List : ListTF;
 		Iterator : access TFacette;
 		M : Maillage;
 		Count : Natural;
+		Mode : Natural;
 	begin
-		Chargement_ASCII(Nom_Fichier, List);
-		Count := List.NbElt;
-		-- une fois qu'on a le nombre de facettes on connait la taille du maillage
-		M := new Tableau_Facette(1..Count);
+		Mode := GetFileMode(Nom_Fichier);
+		if Mode = 0 then -- it is ASCII file
+			Put_Line("Chargement ASCII");
+			Chargement_ASCII(Nom_Fichier, List);
+		
+			Count := List.NbElt;
+			-- une fois qu'on a le nombre de facettes on connait la taille du maillage
+			M := new Tableau_Facette(1..Count);
 
-		Iterator := List.FirstElt;
-		while Iterator /= null loop
-			M(Count).P1 := Iterator.A;
-			M(Count).P2 := Iterator.B;
-			M(Count).P3 := Iterator.C;
+			Iterator := List.FirstElt;
+			while Iterator /= null loop
+				M(Count).P1 := Iterator.A;
+				M(Count).P2 := Iterator.B;
+				M(Count).P3 := Iterator.C;
 
-			Count := Count - 1;
-			Iterator := Iterator.Next; 
-		end loop;
+				Count := Count - 1;
+				Iterator := Iterator.Next; 
+			end loop;
+		elsif Mode = 1 then -- it is binary file
+			Put_Line("Chargement binaire");
+			Chargement_Bin(Nom_Fichier, M);
+		end if;
 
 		return M;
 	end;
