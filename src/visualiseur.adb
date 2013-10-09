@@ -57,7 +57,14 @@ begin
 		Set_Exit_Status(Failure);
 		return;
 	end if;
-	Scene.Ajout_Maillage(Chargement_ASCII(Argument(1)));
+
+	begin
+		Scene.Ajout_Maillage(Chargement(Argument(1)));
+	exception
+		when Name_Error => Put_Line(Standard_Error, "No such file : " & Argument(1));
+		Set_Exit_Status(Failure);
+		return;
+	end;
 
 
 	-- on continue en initialisant l'affichage
@@ -94,6 +101,8 @@ begin
 			(File => Ada.Text_IO.Standard_Error,
 			Item => "SDL.Events.Enable_Key_Repeat: echoue!");
 	end if;
+	
+	Vd.WM_Set_Caption_Title("Visualiseur 3D - " & Argument(1) );
 
 	-- demarrage de la boucle principale
 	-- on gere les entrees/sorties
