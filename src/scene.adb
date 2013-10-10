@@ -5,7 +5,7 @@ use Ada.Text_IO;
 
 package body Scene is
 
-	R : Float := 50.0; -- coordonnee Z initiale de la camera
+	R : Float := 90.0; -- coordonnee Z initiale de la camera
 	Rho : Float := 0.0; -- rotation autour de X
 	Theta : Float := 0.0; -- rotation autour de Y
 	Phi : Float := 0.0; -- rotation autour de Z
@@ -27,15 +27,28 @@ package body Scene is
 		return Position;
 	end;
 
+    procedure Projection(Vs : Vecteur; Vd : out Vecteur) is
+        t : Float := E(3) / (Vs(3) + R); -- todo : use Position_Camera proc
+    begin
+        Vd(1) := t * Vs(1) - E(1);
+        Vd(2) := t * Vs(2) - E(2);
+    end;
+
 	procedure Projection_Facette(Index_Facette : Positive ; P1, P2, P3 : out Vecteur) is
+        f : Facette;
 	begin
 		-- a faire
+        f := M(Index_Facette);
+        Projection(f.P1, P1);
+        Projection(f.P2, P2);
+        Projection(f.P3, P3);
+        
 		null;
 	end;
 
-	procedure Ajout_Maillage(M : Maillage) is
+	procedure Ajout_Maillage(MIn : Maillage) is
 	begin
-		-- a faire
+		M := MIn;
 		null;
 	end;
 
@@ -43,13 +56,16 @@ package body Scene is
 		N : Natural;
 	begin
 		-- a faire
-		return N;
+		return M'Length;
 	end;
 
 	procedure Modification_Coordonnee_Camera(Index : Positive ; Increment : Float) is
 	begin
 		-- a faire
-		null;
+        case Index is
+            when 1 => R := R + Increment;
+            when others => null;
+        end case;
 	end;
 
 begin

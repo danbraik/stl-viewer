@@ -2,6 +2,15 @@ with Dessin;
 use Dessin;
 
 package body Ligne is
+
+    
+	procedure Tracer_Segment(xa, ya, xb, yb : Float) is
+    begin
+        Tracer_Segment(Natural(xa), Natural(ya), 
+                       Natural(xb), Natural(yb));
+    end;
+
+
 	--code entierement repris de wikipedia
 	--https://fr.wikipedia.org/wiki/Algorithme_de_trac%C3%A9_de_segment_de_Bresenham#Algorithme_g.C3.A9n.C3.A9ral_optimis.C3.A9
 	procedure Tracer_Segment(xa, ya, xb, yb : Natural) is
