@@ -38,7 +38,7 @@ package body STL is
 		Index : Positive := 1;
 	begin
 		while not End_Of_File(F) loop
-			Get(F, Char);
+			Get_Immediate(F, Char);
 
 			if Char /= Character'Val(32) 
 				and Char /= Character'Val(9) 
@@ -47,9 +47,11 @@ package body STL is
 				BufferInput(Index) := Char;
 				Index := Index + 1;
 			elsif Index > 1 then
+                Put_Line(BufferInput(1..Index-1));
 				return BufferInput(1..Index-1);
 			end if;
 		end loop;
+                Put_Line(BufferInput(1..Index-1));
 		return BufferInput(1..Index-1);
 	end;
 
