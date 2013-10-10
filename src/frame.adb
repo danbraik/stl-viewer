@@ -26,7 +26,6 @@ package body Frame is
             Ligne.Tracer_Segment(P(1)(1), P(1)(2), 
                                  P(2)(1), P(2)(2));
 for i in 1..3 loop
-null;
     Put( P(i)(1) );  Put(P(i)(2));Put(P(i)(3));New_Line;
 end loop;
 
