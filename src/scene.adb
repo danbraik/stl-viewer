@@ -28,7 +28,7 @@ package body Scene is
 	end;
 
     procedure Projection(Vs : Vecteur; Vd : out Vecteur) is
-        t : Float := E(3) / (Vs(3) + R); -- todo : use Position_Camera proc
+        t : Float := E(3) / (Vs(3) + R + 0.01); -- todo : use Position_Camera proc
     begin
         Vd(1) := t * Vs(1) - E(1);
         Vd(2) := t * Vs(2) - E(2);

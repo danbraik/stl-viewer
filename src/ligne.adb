@@ -1,25 +1,29 @@
 with Dessin;
-use Dessin;
 
 package body Ligne is
 
     
-	procedure Tracer_Segment(xa, ya, xb, yb : Float) is
+    procedure Trace_Pixel(X, Y : Integer) is
+        Xmin : Integer := Dessin.Pixel_X'First;
+        Xmax : Integer := Dessin.Pixel_X'Last;
+        Ymin : Integer := Dessin.Pixel_Y'First;
+        Ymax : Integer := Dessin.Pixel_Y'Last;
     begin
-        Tracer_Segment(Natural(xa), Natural(ya), 
-                       Natural(xb), Natural(yb));
+       if X >= Xmin and then X <= Xmax and then Y >= Ymin and then Y <= Ymax then
+          Dessin.Trace_Pixel(X, Y);
+       end if; 
     end;
 
 
 	--code entierement repris de wikipedia
 	--https://fr.wikipedia.org/wiki/Algorithme_de_trac%C3%A9_de_segment_de_Bresenham#Algorithme_g.C3.A9n.C3.A9ral_optimis.C3.A9
-	procedure Tracer_Segment(xa, ya, xb, yb : Natural) is
+	procedure Tracer_Segment(xa, ya, xb, yb : Float) is
 		dx, dy : Integer;
 		e : Integer;
-		x1 : Natural := xa;
-		y1 : Natural := ya;
-		x2 : Natural := xb;
-		y2 : Natural := yb;
+		x1 : Integer := Integer(Float'Rounding(xa));
+		y1 : Integer := Integer(Float'Rounding(ya));
+		x2 : Integer := Integer(Float'Rounding(xb));
+		y2 : Integer := Integer(Float'Rounding(yb));
 	begin
 		dx := x2 - x1;
 		if dx /= 0 then
