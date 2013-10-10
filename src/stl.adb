@@ -9,7 +9,13 @@ with Ada.Strings.Maps;
 with Ada.Strings.Unbounded;
 use Ada.Strings.Unbounded;
 with Ada.Sequential_IO;
-
+with Ada.Text_IO; -- Text I/O library
+   with Ada.Float_Text_IO; -- Float I/O library
+   with Ada.Sequential_IO; -- Sequential I/O library
+with Ada.Float_Text_IO;
+with Ada.Streams.Stream_IO;
+with Interfaces;
+use Interfaces;
 
 package body STL is
 
@@ -115,22 +121,41 @@ package body STL is
 
 
 	procedure Chargement_Bin(Nom_Fichier : String; M : out Maillage) is
-		--F : Seq_IO.File_Type;
-		F : File_Type;
-		Buffer : array (1..80) of Byte;
-		NbElt : Integer;
+        Input_File   : Ada.Streams.Stream_IO.File_Type;
+        Input_Stream : Ada.Streams.Stream_IO.Stream_Access;
+		F : Ada.Streams.Stream_IO.File_Type;
+		NbElt : Unsigned_32;
+        Char : Integer_8;
+        Index : Positive := 1;
 	begin
-		Open(F, In_File, Nom_Fichier);
-		
-		For i in Buffer'Range loop
-			Get(F, Buffer(i));
+        Ada.Streams.Stream_IO.Open(Input_File,
+            Ada.Streams.Stream_IO.In_File, 
+            Nom_Fichier);
+        Input_Stream := Ada.Streams.Stream_IO.Stream(Input_File);
+
+		For i in 1..80 loop
+		   Integer_8'Read(Input_Stream, Char);
 		end loop;
 
-		Read(NbElt);
-		Put(NbElt);
-		New_Line;
+        Unsigned_32'Read(Input_Stream, NbElt);
 
-		Close(F);
+        M := new Tableau_Facette(1..Integer'Val(NbElt));
+
+        while Index <= M'Last loop
+            For c in 1..3 loop
+                Float'Read(Input_Stream, M(Index).P1(c));
+            end loop;
+            For c in 1..3 loop
+                Float'Read(Input_Stream, M(Index).P2(c));
+            end loop;
+            For c in 1..3 loop
+                Float'Read(Input_Stream, M(Index).P3(c));
+            end loop;
+
+            Index := Index + 1;
+        end loop;
+		
+        Ada.Streams.Stream_IO.Close(Input_File);
 	end;
 
 
