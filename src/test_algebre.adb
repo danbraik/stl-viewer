@@ -7,6 +7,8 @@ procedure Test_algebre is
     X : Matrice(1..3,1..3); 
     Y : Vecteur(1..3);
     Z : Vecteur(1..3);
+
+    A, B : Matrice(1..3,1..3);
 begin
     for r in X'Range(1) loop
         for c in X'Range(2) loop
@@ -22,10 +24,37 @@ begin
 
     Z := X*Y;
 
-    For i in Z'Range loop
-        Put(Z(i));New_Line;
+  --  For i in Z'Range loop
+  --      Put(Z(i));New_Line;
+  --  end loop;
+
+
+    for r in A'Range(1) loop
+        for c in A'Range(2) loop
+            A(r,c) := 0.0;
+        end loop;
+    end loop;
+
+    for r in B'Range(1) loop
+        for c in B'Range(2) loop
+            B(r,c) := 0.0;
+        end loop;
+    end loop;
+
+    for i in 1..3 loop
+        A(i,i):=1.0;
+        B(i,i):=1.0;
     end loop;
 
 
+    X := A * B;
+
+
+    for r in X'Range(1) loop
+        for c in X'Range(2) loop
+            Put(X(r,c));
+        end loop;
+        New_Line;
+    end loop;
 
 end;

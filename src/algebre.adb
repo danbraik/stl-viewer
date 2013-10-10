@@ -36,6 +36,22 @@ package body Algebre is
 		return Rotation;
 	end;
 
+
+    function "*" (A, B : Matrice) return Matrice is
+        Z : Matrice(A'Range(1), B'Range(2));
+    begin
+	    for r in Z'Range(1) loop
+            for c in Z'Range(2) loop
+                Z(r,c) := 0.0;
+                for i in Z'Range(2) loop
+                    Z(r,c) := Z(r,c) + A(r, i) * B(i, c);
+                end loop;
+            end loop;
+        end loop;
+
+		return Z;
+    end;
+
 	function "*" (X : Matrice ; Y : Vecteur) return Vecteur is
 		Z : Vecteur(X'Range(1));
 	begin
