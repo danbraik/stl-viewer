@@ -66,6 +66,9 @@ package body Scene is
 		-- a faire
         case Index is
             when 1 => R := R + Increment;
+            when 2 => Rho := Rho + Increment;
+            when 3 => Theta := Theta + Increment;
+            when 4 => Phi := Phi + Increment;
             when others => null;
         end case;
 

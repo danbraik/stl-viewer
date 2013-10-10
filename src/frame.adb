@@ -21,18 +21,19 @@ package body Frame is
         for IdF in 1..Scene.Nombre_De_Facettes loop
             Scene.Projection_Facette(IdF, P(1), P(2), P(3));
             
-            
+           if P(1)(3) > 0.0 or else P(2)(3) > 0.0 or else P(3)(3) > 0.0 then 
 
             Ligne.Tracer_Segment(P(1)(1), P(1)(2), 
                                  P(2)(1), P(2)(2));
-for i in 1..3 loop
-    Put( P(i)(1) );  Put(P(i)(2));Put(P(i)(3));New_Line;
-end loop;
+--for i in 1..3 loop
+  --  Put( P(i)(1) );  Put(P(i)(2));Put(P(i)(3));New_Line;
+--end loop;
 
-            --Ligne.Tracer_Segment(P(2)(1), P(2)(2), 
-             --                    P(3)(1), P(3)(2));
-           -- Ligne.Tracer_Segment(P(3)(1), P(3)(2), 
-               --                  P(1)(1), P(1)(2));
+            Ligne.Tracer_Segment(P(2)(1), P(2)(2), 
+                                 P(3)(1), P(3)(2));
+            Ligne.Tracer_Segment(P(3)(1), P(3)(2), 
+                                 P(1)(1), P(1)(2));
+           end if;
 
         end loop;
         
