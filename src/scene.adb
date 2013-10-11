@@ -5,7 +5,7 @@ use Ada.Text_IO;
 
 package body Scene is
 
-	R : Float := 90.0; -- coordonnee Z initiale de la camera
+	R : Float := 5.0; -- coordonnee Z initiale de la camera
 	Rho : Float := 0.0; -- rotation autour de X
 	Theta : Float := 0.0; -- rotation autour de Y
 	Phi : Float := 0.0; -- rotation autour de Z

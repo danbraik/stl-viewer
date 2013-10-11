@@ -1,4 +1,6 @@
 with Dessin;
+with Ada.Numerics.Elementary_Functions;
+use Ada.Numerics.Elementary_Functions;
 
 package body Ligne is
 
@@ -14,7 +16,7 @@ package body Ligne is
        end if; 
     end;
 
-    procedure Fixe_Pixel(X, Y : Integer; Val : Uint8) is
+    procedure Fixe_Pixel(X, Y : Integer; Val : PixLum) is
     begin
        if X >= Xmin and then X <= Xmax and then Y >= Ymin and then Y <= Ymax then
           Dessin.Fixe_Pixel(X, Y, Val);
@@ -247,7 +249,7 @@ package body Ligne is
 		-- le pixel final (x2, y2) n’est pas tracé.
     end;	
 
-    procedure Tracer_Segment_LumVar(Xa, Ya, Xb, Yb : Float; Va, Vb : Uint8) is
+    procedure Tracer_Segment_LumVar(Xa, Ya, Xb, Yb : Float; Va, Vb : PixLum) is
 		dx, dy : Integer;
         dv : Float;
 		e : Integer;
@@ -255,7 +257,7 @@ package body Ligne is
 		y1 : Integer := Integer(Float'Rounding(ya));
 		x2 : Integer := Integer(Float'Rounding(xb));
 		y2 : Integer := Integer(Float'Rounding(yb));
-        v : Uint8 := Va;
+        v : PixLum := Va;
 	begin
         -- Make false lines. TO correct
         if x1 < Xmin then
@@ -284,6 +286,8 @@ package body Ligne is
         end if;
 
 
+		dv := (Float(Va) - Float(Vb)) / sqrt( 1.0 + Float((x2-x1)**2) + Float((y2-y1)**2)); 
+
 		dx := x2 - x1;
 		if dx /= 0 then
 			if dx > 0 then
@@ -298,6 +302,7 @@ package body Ligne is
 							dx := e * 2 ; dy := dy * 2 ;  -- e est positif
 							loop  -- déplacements horizontaux
 								Fixe_Pixel(x1, y1, v) ;
+								v := PixLum((Float(v) + dv) );
 								x1 := x1 + 1;
 								exit when x1 = x2 ;
 								e := e - dy;

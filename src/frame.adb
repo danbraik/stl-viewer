@@ -14,6 +14,8 @@ package body Frame is
 
 	procedure Calcul_Image is
         P : array (1..3) of Vecteur(1..3);
+		Dist : Float;
+		V1, V2 : PixLum;
 	begin
 		-- a faire : calcul des projections, affichage des triangles
         --
@@ -27,9 +29,18 @@ package body Frame is
 --for i in 1..3 loop
 --   Put( P(i)(1) );  Put(P(i)(2));Put(P(i)(3));New_Line;
 --end loop;
+			Dist := P(1)(3);
+			if Dist < 6.0 then
+				V1 := 255;
+			elsif Dist < 10.0 then
+				V1 := 127;
+			else
+				V1 := 32;
+			end if;
+			V2 := 32;
 
-            Ligne.Tracer_Segment(P(1)(1), P(1)(2), 
-                                 P(2)(1), P(2)(2));
+            Ligne.Tracer_Segment_LumVar(P(1)(1), P(1)(2), 
+                                 P(2)(1), P(2)(2), V1, V2);
 
             Ligne.Tracer_Segment(P(2)(1), P(2)(2), 
                                  P(3)(1), P(3)(2));
