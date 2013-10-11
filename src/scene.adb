@@ -19,7 +19,7 @@ package body Scene is
 	procedure Modification_Matrice_Rotation is
 	begin
 		T := Matrice_Rotations ((1 => -Rho, 2 => -Theta, 3 => -Phi));
-		T2 := Matrice_Rotations_Inverses ((1 => -Rho, 2 => -Theta, 3 => -Phi));
+		T2 := Matrice_Rotations_Inverses ((1 => Rho, 2 => Theta, 3 => Phi));
 	end Modification_Matrice_Rotation;
 
 
@@ -27,8 +27,9 @@ package body Scene is
 		Position : Vecteur(1..3);
         Base : Vecteur(1..3);
 	begin
-        Base := (0.0, 0.0, -R);
+        Base := (0.0, 0.0, -R+0.001);
         Position := T * Base;
+		--Position := Base;
 		return Position;
 	end;
 

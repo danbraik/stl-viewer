@@ -50,11 +50,24 @@ begin
     X := A * B;
 
 
-    for r in X'Range(1) loop
-        for c in X'Range(2) loop
-            Put(X(r,c));
-        end loop;
-        New_Line;
+--    for r in X'Range(1) loop
+--        for c in X'Range(2) loop
+     --       Put(X(r,c));
+--        end loop;
+     --   New_Line;
+--    end loop;
+
+
+
+	Y := (1.0, 0.0,0.0);
+	Z := Matrice_Rotations ((1=>3.1415/2.0,2=>03.1415/2.0,3=>0.0))   * Y;
+    For i in Z'Range loop
+        Put(Z(i));New_Line;
+    end loop;
+
+	Z := Matrice_Rotations_Inverses ((1=>3.1415/2.0,2=>03.1415/2.0,3=>0.0))   * Y;
+    For i in Z'Range loop
+        Put(Z(i));New_Line;
     end loop;
 
 end;
