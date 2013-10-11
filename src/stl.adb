@@ -47,11 +47,9 @@ package body STL is
 				BufferInput(Index) := Char;
 				Index := Index + 1;
 			elsif Index > 1 then
-                Put_Line(BufferInput(1..Index-1));
 				return BufferInput(1..Index-1);
 			end if;
 		end loop;
-                Put_Line(BufferInput(1..Index-1));
 		return BufferInput(1..Index-1);
 	end;
 
