@@ -23,9 +23,9 @@ package body Frame is
             
            if P(1)(3) > 0.0 or else P(2)(3) > 0.0 or else P(3)(3) > 0.0 then 
 
-for i in 1..3 loop
-   Put( P(i)(1) );  Put(P(i)(2));Put(P(i)(3));New_Line;
-end loop;
+--for i in 1..3 loop
+--   Put( P(i)(1) );  Put(P(i)(2));Put(P(i)(3));New_Line;
+--end loop;
 
             Ligne.Tracer_Segment(P(1)(1), P(1)(2), 
                                  P(2)(1), P(2)(2));

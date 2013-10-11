@@ -127,7 +127,8 @@ package body STL is
 		NbElt : Unsigned_32;
         Char : Integer_8;
         Index : Positive := 1;
-
+        TmpF : Float;
+        I16 : Integer_16;
 	begin
         Ada.Streams.Stream_IO.Open(Input_File,
             Ada.Streams.Stream_IO.In_File, 
@@ -143,15 +144,24 @@ package body STL is
         M := new Tableau_Facette(1..Integer'Val(NbElt));
 
         while Index <= M'Last loop
+            -- read normal vector
+            For c in 1..3 loop
+                Float'Read(Input_Stream, TmpF);
+            end loop;
+            -- read vertex 1
             For c in 1..3 loop
                 Float'Read(Input_Stream, M(Index).P1(c));
             end loop;
+            -- read vertex 2
             For c in 1..3 loop
                 Float'Read(Input_Stream, M(Index).P2(c));
             end loop;
+            -- read vertex 3
             For c in 1..3 loop
                 Float'Read(Input_Stream, M(Index).P3(c));
             end loop;
+            -- read byte count
+            Integer_16'Read(Input_Stream, I16);
 
             Index := Index + 1;
         end loop;
