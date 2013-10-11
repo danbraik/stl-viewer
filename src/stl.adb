@@ -127,6 +127,7 @@ package body STL is
 		NbElt : Unsigned_32;
         Char : Integer_8;
         Index : Positive := 1;
+
 	begin
         Ada.Streams.Stream_IO.Open(Input_File,
             Ada.Streams.Stream_IO.In_File, 

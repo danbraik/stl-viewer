@@ -2,12 +2,12 @@ with Dessin;
 
 package body Ligne is
 
-    
-    procedure Trace_Pixel(X, Y : Integer) is
         Xmin : Integer := Dessin.Pixel_X'First;
         Xmax : Integer := Dessin.Pixel_X'Last;
         Ymin : Integer := Dessin.Pixel_Y'First;
         Ymax : Integer := Dessin.Pixel_Y'Last;
+    
+    procedure Trace_Pixel(X, Y : Integer) is
     begin
        if X >= Xmin and then X <= Xmax and then Y >= Ymin and then Y <= Ymax then
           Dessin.Trace_Pixel(X, Y);
@@ -25,6 +25,33 @@ package body Ligne is
 		x2 : Integer := Integer(Float'Rounding(xb));
 		y2 : Integer := Integer(Float'Rounding(yb));
 	begin
+        -- Make false lines. TO correct
+        if x1 < Xmin then
+            x1 := Xmin;
+        end if;
+        if x1 > Xmax then
+            x1 := Xmax;
+        end if;
+        if x2 < Xmin then
+            x2 := Xmin;
+        end if;
+        if x2 > Xmax then
+            x2 := Xmax;
+        end if;
+        if y1 < Ymin then
+            y1 := Ymin;
+        end if;
+        if y1 > Ymax then
+            y1 := Ymax;
+        end if;
+        if y2 < Ymin then
+            y2 := Ymin;
+        end if;
+        if y2 > Ymax then
+            y2 := Ymax;
+        end if;
+
+
 		dx := x2 - x1;
 		if dx /= 0 then
 			if dx > 0 then
