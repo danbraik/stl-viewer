@@ -283,7 +283,6 @@ package body Ligne is
             y2 := Ymax;
         end if;
 
-        dv := Float(Vb - Va) / ( (x2-x1)**2 + (y2-y1)**2  );
 
 		dx := x2 - x1;
 		if dx /= 0 then
