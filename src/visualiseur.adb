@@ -136,9 +136,9 @@ begin
 							Scene.Modification_Coordonnee_Camera(4, -0.1);
 							-- page up et down permettent d'avance / reculer
 						when SDL.Keysym.K_PAGEUP =>
-							Scene.Modification_Coordonnee_Camera(1, 5.0);
-						when SDL.Keysym.K_PAGEDOWN =>
 							Scene.Modification_Coordonnee_Camera(1, -5.0);
+						when SDL.Keysym.K_PAGEDOWN =>
+							Scene.Modification_Coordonnee_Camera(1, 5.0);
 						when others =>
 							null;
 					end case;

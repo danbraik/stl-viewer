@@ -1,17 +1,57 @@
 with Dessin;
-use Dessin;
 
 package body Ligne is
+
+        Xmin : Integer := Dessin.Pixel_X'First;
+        Xmax : Integer := Dessin.Pixel_X'Last;
+        Ymin : Integer := Dessin.Pixel_Y'First;
+        Ymax : Integer := Dessin.Pixel_Y'Last;
+    
+    procedure Trace_Pixel(X, Y : Integer) is
+    begin
+       if X >= Xmin and then X <= Xmax and then Y >= Ymin and then Y <= Ymax then
+          Dessin.Trace_Pixel(X, Y);
+       end if; 
+    end;
+
+
 	--code entierement repris de wikipedia
 	--https://fr.wikipedia.org/wiki/Algorithme_de_trac%C3%A9_de_segment_de_Bresenham#Algorithme_g.C3.A9n.C3.A9ral_optimis.C3.A9
-	procedure Tracer_Segment(xa, ya, xb, yb : Natural) is
+	procedure Tracer_Segment(xa, ya, xb, yb : Float) is
 		dx, dy : Integer;
 		e : Integer;
-		x1 : Natural := xa;
-		y1 : Natural := ya;
-		x2 : Natural := xb;
-		y2 : Natural := yb;
+		x1 : Integer := Integer(Float'Rounding(xa));
+		y1 : Integer := Integer(Float'Rounding(ya));
+		x2 : Integer := Integer(Float'Rounding(xb));
+		y2 : Integer := Integer(Float'Rounding(yb));
 	begin
+        -- Make false lines. TO correct
+        if x1 < Xmin then
+            x1 := Xmin;
+        end if;
+        if x1 > Xmax then
+            x1 := Xmax;
+        end if;
+        if x2 < Xmin then
+            x2 := Xmin;
+        end if;
+        if x2 > Xmax then
+            x2 := Xmax;
+        end if;
+        if y1 < Ymin then
+            y1 := Ymin;
+        end if;
+        if y1 > Ymax then
+            y1 := Ymax;
+        end if;
+        if y2 < Ymin then
+            y2 := Ymin;
+        end if;
+        if y2 > Ymax then
+            y2 := Ymax;
+        end if;
+
+
 		dx := x2 - x1;
 		if dx /= 0 then
 			if dx > 0 then
