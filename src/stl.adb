@@ -18,7 +18,7 @@ package body STL is
 
 	-- 
     type TFacette is record
-        a,b,c : Vecteur(1..3);
+		face : Facette;
         next : access TFacette;
     end record;
 	type Acc_TFacette is access TFacette;
@@ -89,7 +89,7 @@ package body STL is
 						end if;
 					when Vertex_1 =>
 						if Word = "vertex" then
-        					NouvelleFace.A := (
+        					NouvelleFace.face.P1 := (
 								Float'Value(Get_Next_Word(F)),
 								Float'Value(Get_Next_Word(F)),
 								Float'Value(Get_Next_Word(F)));
@@ -97,7 +97,7 @@ package body STL is
 						end if;
 					when Vertex_2 =>
 						if Word = "vertex" then
-        					NouvelleFace.B := (
+        					NouvelleFace.face.P2 := (
 								Float'Value(Get_Next_Word(F)),
 								Float'Value(Get_Next_Word(F)),
 								Float'Value(Get_Next_Word(F)));
@@ -105,7 +105,7 @@ package body STL is
 						end if;
 					when Vertex_3 =>
 						if Word = "vertex" then
-        					NouvelleFace.C := (
+        					NouvelleFace.face.P3 := (
 								Float'Value(Get_Next_Word(F)),
 								Float'Value(Get_Next_Word(F)),
 								Float'Value(Get_Next_Word(F)));
@@ -139,7 +139,13 @@ package body STL is
 
         Unsigned_32'Read(Input_Stream, NbElt);
 
-        M := new Tableau_Facette(1..Integer'Val(NbElt));
+		begin
+	        M := new Tableau_Facette(1..Integer'Val(NbElt));
+		exception
+			when Storage_Error => M := null;
+								  Put_Line("er");
+								  return;
+		end;
 
         while Index <= M'Last loop
             -- read normal vector
@@ -191,7 +197,7 @@ package body STL is
 	function Chargement(Nom_Fichier : String) return Maillage is
 		List : ListTF;
 		Iterator : access TFacette;
-		M : Maillage;
+		M : Maillage := null;
 		Count : Natural;
 		Mode : Natural;
 	begin
@@ -206,9 +212,7 @@ package body STL is
 
 			Iterator := List.FirstElt;
 			while Iterator /= null loop
-				M(Count).P1 := Iterator.A;
-				M(Count).P2 := Iterator.B;
-				M(Count).P3 := Iterator.C;
+				M(Count) := Iterator.face;
 
 				Count := Count - 1;
 				Iterator := Iterator.Next; 
@@ -217,6 +221,13 @@ package body STL is
 			Put_Line("Chargement binaire");
 			Chargement_Bin(Nom_Fichier, M);
 		end if;
+
+		-- check if M is not null
+		if M = null then
+			M := new Tableau_Facette(1..0);
+		end if;
+
+		Put_Line(Integer'Image(M'Length) & " faces loaded.");
 
 		return M;
 	end;
