@@ -88,16 +88,21 @@ package body Algebre is
         tmp : Float;
         P, D : Vecteur(1..3);
 	begin
+		-- calculates point coo relative the camera center
         P := (  A(1) - C(1), 
                 A(2) - C(2),
                 A(3) - C(3) );
 
+		-- calc point coo in the camera system
         D := T * P;
 
-        tmp := E(3) / D(3); 
-        Resultat(1) := tmp * D(1) - E(1);
-        Resultat(2) := tmp * D(2) - E(2);
-        Resultat(3) := D(3);
+		-- prevent div by 0
+		if D(3) /= 0.0 then
+    	    tmp := E(3) / D(3); 
+			Resultat(1) := tmp * D(1) - E(1);
+			Resultat(2) := tmp * D(2) - E(2);
+			Resultat(3) := D(3);
+		end if;
 
 		return Resultat;
 	end;
