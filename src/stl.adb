@@ -16,15 +16,19 @@ with Interfaces; use Interfaces;
 
 package body STL is
 
-	-- 
+	-- Node of a linked list
+	-- Contains a face and an access to the next Node	
     type TFacette is record
 		face : Facette;
         next : access TFacette;
     end record;
 	type Acc_TFacette is access TFacette;
 
+	-- Linked List of face
 	type ListTF is record
+		-- Access to the first element
 		FirstElt : Acc_TFacette;
+		-- Number of element into the list
 		NbElt : Natural;
 	end record;
 
@@ -56,7 +60,7 @@ package body STL is
 
 
 
-	procedure Chargement_ASCII(Nom_Fichier : String; List : out ListTF) is
+	procedure Chargement_ASCII(Nom_Fichier : String; M : out Maillage) is
 		type State is 
 			(
 				Main,
@@ -67,6 +71,9 @@ package body STL is
 		Current : State := Main;
 		F : Ada.Text_IO.File_Type;
         NouvelleFace : Acc_TFacette;
+		List : ListTF;
+		Iterator : access TFacette;
+		Count : Natural;
 	begin
 
 		List.FirstElt := null;
@@ -115,6 +122,25 @@ package body STL is
 			end;
 		end loop;
 		Close (F);
+
+		-- une fois qu'on a le nombre de facettes on connait la taille du maillage
+		Count := List.NbElt;
+		begin
+	        M := new Tableau_Facette(1..Count);
+		exception
+			when Storage_Error => M := null;
+								  Put_Line(Standard_Error, "Error when loading file : not enough memory.");
+								  return;
+		end;
+
+		Iterator := List.FirstElt;
+		while Iterator /= null loop
+			M(Count) := Iterator.face;
+
+			Count := Count - 1;
+			Iterator := Iterator.Next; 
+		end loop;
+
 	end;
 
 
@@ -143,7 +169,7 @@ package body STL is
 	        M := new Tableau_Facette(1..Integer'Val(NbElt));
 		exception
 			when Storage_Error => M := null;
-								  Put_Line("er");
+								  Put_Line(Standard_Error, "Error when loading file : not enough memory.");
 								  return;
 		end;
 
@@ -179,7 +205,6 @@ package body STL is
 		Res : Natural;
 		Buffer : String(1..5);
 	begin
-		
 		Open(F, In_File, Fname);
 		For i in Buffer'Range loop
 			Get(F, Buffer(i));
@@ -195,34 +220,20 @@ package body STL is
 	end;
 
 	function Chargement(Nom_Fichier : String) return Maillage is
-		List : ListTF;
-		Iterator : access TFacette;
 		M : Maillage := null;
-		Count : Natural;
 		Mode : Natural;
 	begin
 		Mode := GetFileMode(Nom_Fichier);
 		if Mode = 0 then -- it is ASCII file
-			Put_Line("Chargement ASCII");
-			Chargement_ASCII(Nom_Fichier, List);
-		
-			Count := List.NbElt;
-			-- une fois qu'on a le nombre de facettes on connait la taille du maillage
-			M := new Tableau_Facette(1..Count);
-
-			Iterator := List.FirstElt;
-			while Iterator /= null loop
-				M(Count) := Iterator.face;
-
-				Count := Count - 1;
-				Iterator := Iterator.Next; 
-			end loop;
+			Put_Line("STL file : ASCII format.");
+			Chargement_ASCII(Nom_Fichier, M);
 		elsif Mode = 1 then -- it is binary file
-			Put_Line("Chargement binaire");
+			Put_Line("STL file : binary format.");
 			Chargement_Bin(Nom_Fichier, M);
 		end if;
 
-		-- check if M is not null
+		-- check if M is null
+		-- if it is, create an empty array
 		if M = null then
 			M := new Tableau_Facette(1..0);
 		end if;
