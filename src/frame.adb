@@ -27,8 +27,9 @@ package body Frame is
 				--   Put(Pts(i)(1));Put(Pts(i)(2));Put(Pts(i)(3));New_Line;
 				--end loop;
 
-	            Ligne.Tracer_Segment_LumVar(P(1)(1), P(1)(2), 
-											P(2)(1), P(2)(2), val);
+				val := 255;
+	            Ligne.Tracer_Segment_LumVar(Pts(1)(1), Pts(1)(2), 
+											Pts(2)(1), Pts(2)(2), val);
 
             	--Ligne.Tracer_Segment(Pts(1)(1), Pts(1)(2), 
                 --					 Pts(2)(1), Pts(2)(2));
