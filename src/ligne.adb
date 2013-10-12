@@ -56,6 +56,7 @@ package body Ligne is
 							dx := e * 2 ; dy := dy * 2 ;  -- e est positif
 							loop  -- déplacements horizontaux
 								DrawPixel(x1, y1, z1, val) ;
+								z1 := z1 + dz;
 								x1 := x1 + 1;
 								exit when x1 = x2 ;
 								e := e - dy;
@@ -70,6 +71,7 @@ package body Ligne is
 							dy := e * 2 ; dx := dx * 2 ;  -- e est positif
 							loop  -- déplacements verticaux
 								DrawPixel(x1, y1, z1, val) ;
+								z1 := z1 + dz;
 								y1 := y1 + 1;
 								exit when y1 = y2 ;
 								e := e - dx;
@@ -89,6 +91,7 @@ package body Ligne is
 							dx := e * 2 ; dy := dy * 2 ;  -- e est positif
 							loop  -- déplacements horizontaux
 								DrawPixel(x1, y1, z1, val) ;
+								z1 := z1 + dz;
 								x1 := x1 + 1;
 								exit when x1 = x2 ;
 								e := e + dy;
@@ -102,6 +105,7 @@ package body Ligne is
 							dy := e * 2 ; dx := dx * 2 ;  -- e est négatif
 							loop  -- déplacements verticaux
 								DrawPixel(x1, y1, z1, val) ;
+								z1 := z1 + dz;
 								y1 := y1 - 1;
 								exit when y1 = y2 ;
 								e := e + dx;
@@ -118,6 +122,7 @@ package body Ligne is
 					-- vecteur horizontal vers la droite
 					loop
 						DrawPixel(x1, y1, z1, val) ;
+								z1 := z1 + dz;
 						x1 := x1 + 1;
 						exit when x1 = x2 ;
 					end loop;
@@ -125,6 +130,7 @@ package body Ligne is
 				end if;
 			else  -- dx < 0
 				dy := y2 - y1;
+				dz := z2 - z1;
 				if dy /= 0 then
 					if dy > 0 then
 						-- vecteur oblique dans le 2nd quadran
@@ -135,6 +141,7 @@ package body Ligne is
 							dx := e * 2 ; dy := dy * 2 ;  -- e est négatif
 							loop  -- déplacements horizontaux
 								DrawPixel(x1, y1, z1, val) ;
+								z1 := z1 + dz;
 								x1 := x1 - 1;
 								exit when x1 = x2 ;
 								e := e + dy;
@@ -149,6 +156,7 @@ package body Ligne is
 							dy := e * 2 ; dx := dx * 2 ;  -- e est positif
 							loop  -- déplacements verticaux
 								DrawPixel(x1, y1, z1, val) ;
+								z1 := z1 + dz;
 								y1 := y1 + 1;
 								exit when y1 = y2 ;
 								e := e + dx;
@@ -168,6 +176,7 @@ package body Ligne is
 							dx := e * 2 ; dy := dy * 2 ;  -- e est négatif
 							loop  -- déplacements horizontaux
 								DrawPixel(x1, y1, z1, val) ;
+								z1 := z1 + dz;
 								x1 := x1 - 1;
 								exit when x1 = x2 ;
 								e := e - dy;
@@ -181,6 +190,7 @@ package body Ligne is
 							dy := e * 2 ; dx := dx * 2 ;  -- e est négatif
 							loop  -- déplacements verticaux
 								DrawPixel(x1, y1, z1, val) ;
+								z1 := z1 + dz;
 								y1 := y1 - 1;
 								exit when y1 = y2 ;
 								e := e - dx;
@@ -197,6 +207,7 @@ package body Ligne is
 					-- vecteur horizontal vers la gauche
 					loop
 						DrawPixel(x1, y1, z1, val) ;
+								z1 := z1 + dz;
 						x1 := x1 - 1;
 						exit when x1 = x2 ;
 					end loop;
@@ -211,6 +222,7 @@ package body Ligne is
 					-- vecteur vertical croissant
 					loop
 						DrawPixel(x1, y1, z1, val) ;
+								z1 := z1 + dz;
 						y1 := y1 + 1;
 						exit when y1 = y2 ;
 					end loop;
@@ -220,6 +232,7 @@ package body Ligne is
 					-- vecteur vertical décroissant
 					loop
 						DrawPixel(x1, y1, z1, val) ;
+								z1 := z1 + dz;
 						y1 := y1 - 1;
 						exit when y1 = y2 ;
 					end loop;
