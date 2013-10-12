@@ -1,4 +1,5 @@
 with Dessin;
+with Ada.Numerics.Elementary_Functions; use Ada.Numerics.Elementary_Functions;
 
 package body Ligne is
 
@@ -7,7 +8,8 @@ package body Ligne is
 	Ymin : Integer := Dessin.Pixel_Y'First;
     Ymax : Integer := Dessin.Pixel_Y'Last;
     
-	-- to move to Dessin package ?
+	-- Draw a pixel on screen
+	-- Can be called with an invalid position
     procedure Trace_Pixel(X, Y : Integer) is
     begin
        if X >= Xmin and then X <= Xmax and then Y >= Ymin and then Y <= Ymax then
@@ -25,32 +27,10 @@ package body Ligne is
 		x2 : Integer := Integer(Float'Rounding(xb));
 		y2 : Integer := Integer(Float'Rounding(yb));
 	begin
-        -- Make false lines. TO correct
-        if x1 < Xmin then
-            x1 := Xmin;
-        end if;
-        if x1 > Xmax then
-            x1 := Xmax;
-        end if;
-        if x2 < Xmin then
-            x2 := Xmin;
-        end if;
-        if x2 > Xmax then
-            x2 := Xmax;
-        end if;
-        if y1 < Ymin then
-            y1 := Ymin;
-        end if;
-        if y1 > Ymax then
-            y1 := Ymax;
-        end if;
-        if y2 < Ymin then
-            y2 := Ymin;
-        end if;
-        if y2 > Ymax then
-            y2 := Ymax;
-        end if;
-
+		-- prevent to draw very big lines
+		if abs(x2 - x1) > 800 or else abs(y2 - y1) > 800 then
+			return;
+		end if;
 
 		dx := x2 - x1;
 		if dx /= 0 then
