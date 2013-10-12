@@ -17,6 +17,9 @@ package body Frame is
 		-- projected points (fourth is the normal)
         Pts : array (1..4) of Vecteur(1..3);
 		val : PixLum;
+		CamPos : Vecteur := Scene.Position_Camera;
+		Tmp, Tmp2 : Vecteur(1..3);
+		
 	begin
 		-- for each Facette
         for faceIndex in 1..Scene.Nombre_De_Facettes loop
@@ -29,13 +32,12 @@ package body Frame is
 				--   Put(Pts(i)(1));Put(Pts(i)(2));Put(Pts(i)(3));New_Line;
 				--end loop;
 				
-				if Pts(1)(3) > 50.0 then
-					val := 0;
-				else
-					val := PixLum(
-					    exp( -0.05 * Pts(1)(3)  )*255.0  );
-				end if;
-	            
+				Tmp := (Pts(1));
+				normalize(Tmp);
+				Tmp2 :=  Pts(1) - Pts(4);
+				normalize(Tmp2);
+				val := PixLum( 255.0-  (length (Tmp2   * Tmp )) * 255.0 );
+
 				Ligne.Tracer_Segment_LumVar(Pts(1)(1), Pts(1)(2), 
 											Pts(2)(1), Pts(2)(2), val);
 	            
