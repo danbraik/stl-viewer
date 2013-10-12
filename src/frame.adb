@@ -48,7 +48,7 @@ package body Frame is
 
 				if Params.DisplayNormals then
 
-				   Put(Pts(4)(1));Put(Pts(4)(2));Put(Pts(4)(3));New_Line;
+--				   Put(Pts(4)(1));Put(Pts(4)(2));Put(Pts(4)(3));New_Line;
             	Ligne.Tracer_Segment(Pts(1)(1), Pts(1)(2), 
                 					 Pts(4)(1), Pts(4)(2));
 
