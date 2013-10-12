@@ -22,15 +22,20 @@ package body Ligne is
 	procedure Tracer_Segment(xa, ya, xb, yb : Float) is
 		dx, dy : Integer;
 		e : Integer;
-		x1 : Integer := Integer(Float'Rounding(xa));
-		y1 : Integer := Integer(Float'Rounding(ya));
-		x2 : Integer := Integer(Float'Rounding(xb));
-		y2 : Integer := Integer(Float'Rounding(yb));
+		x1 : Integer; 
+		y1 : Integer;
+		x2 : Integer;
+		y2 : Integer;
 	begin
 		-- prevent to draw very big lines
-		if abs(x2 - x1) > 800 or else abs(y2 - y1) > 800 then
+		if abs(Xb - Xa) > 800.0 or else abs(Yb - Ya) > 800.0 then 
 			return;
 		end if;
+	
+		x1 := Integer(Float'Rounding(xa));
+		y1 := Integer(Float'Rounding(ya));
+		x2 := Integer(Float'Rounding(xb));
+		y2 := Integer(Float'Rounding(yb));
 
 		dx := x2 - x1;
 		if dx /= 0 then
