@@ -16,8 +16,9 @@ package Scene is
 	function Nombre_De_Facettes return Natural;
 
 	-- Projection_Facette prend en entree un numero de facette (Index_Facette)
-	-- et renvoie les coordonnees 2D des projections des 3 points de
+	-- et renvoie les coordonnees 3D des projections des 3 points de
 	-- la facette correspondante
+	-- The third coordinate indicates the distance between the point and the camera
 	procedure Projection_Facette(Index_Facette : Positive ; P1, P2, P3 : out Vecteur);
 
 	-- quelques procedures permettant de mettre a jour les objets :

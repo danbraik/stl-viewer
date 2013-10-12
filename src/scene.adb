@@ -12,25 +12,21 @@ package body Scene is
 
 	E : Vecteur(1..3) := (-400.0, -300.0, 400.0); -- position du spectateur
 	T : Matrice(1..3, 1..3); -- matrice de rotation
-	T2 : Matrice(1..3, 1..3); -- matrice de rotation
+	Ti : Matrice(1..3, 1..3); -- matrice inverse de rotation
 
 	M : Maillage;
 
 	procedure Modification_Matrice_Rotation is
 	begin
 		T := Matrice_Rotations ((1 => -Rho, 2 => -Theta, 3 => -Phi));
-		T2 := Matrice_Rotations_Inverses ((1 => Rho, 2 => Theta, 3 => Phi));
+		Ti := Matrice_Rotations_Inverses ((1 => Rho, 2 => Theta, 3 => Phi));
 	end Modification_Matrice_Rotation;
 
 
 	function Position_Camera return Vecteur is
-		Position : Vecteur(1..3);
-        Base : Vecteur(1..3);
 	begin
-        Base := (0.0, 0.0, -R+0.001);
-        Position := T * Base;
-		--Position := Base;
-		return Position;
+		-- camera is first placed at (0, 0, -R);
+		return T * (0.0, 0.0, -R); 
 	end;
 
 
@@ -38,12 +34,11 @@ package body Scene is
         f : Facette;
         PosCam : Vecteur := Position_Camera;
 	begin
-		-- a faire
         f := M(Index_Facette);
 
-        P1 := Projection(f.P1, PosCam, E, T2);
-        P2 := Projection(f.P2, PosCam, E, T2);
-        P3 := Projection(f.P3, PosCam, E, T2);
+        P1 := Projection(f.P1, PosCam, E, Ti);
+        P2 := Projection(f.P2, PosCam, E, Ti);
+        P3 := Projection(f.P3, PosCam, E, Ti);
 	end;
 
 
@@ -55,18 +50,18 @@ package body Scene is
 
 
 	function Nombre_De_Facettes return Natural is
-		N : Natural;
 	begin
-		-- a faire
 		return M'Length;
 	end;
 
 
 	procedure Modification_Coordonnee_Camera(Index : Positive ; Increment : Float) is
 	begin
-		-- a faire
         case Index is
             when 1 => R := R + Increment;
+					  if R < 0.0 then
+						  R := 0.0;
+					  end if;
             when 2 => Rho := Rho + Increment;
             when 3 => Theta := Theta + Increment;
             when 4 => Phi := Phi + Increment;

@@ -1,14 +1,15 @@
 with Dessin;
-with Ada.Numerics.Elementary_Functions;
-use Ada.Numerics.Elementary_Functions;
+with Ada.Numerics.Elementary_Functions; use Ada.Numerics.Elementary_Functions;
 
 package body Ligne is
 
-        Xmin : Integer := Dessin.Pixel_X'First;
-        Xmax : Integer := Dessin.Pixel_X'Last;
-        Ymin : Integer := Dessin.Pixel_Y'First;
-        Ymax : Integer := Dessin.Pixel_Y'Last;
+	Xmin : Integer := Dessin.Pixel_X'First;
+	Xmax : Integer := Dessin.Pixel_X'Last;
+	Ymin : Integer := Dessin.Pixel_Y'First;
+    Ymax : Integer := Dessin.Pixel_Y'Last;
     
+	-- Draw a pixel on screen
+	-- Can be called with an invalid position
     procedure Trace_Pixel(X, Y : Integer) is
     begin
        if X >= Xmin and then X <= Xmax and then Y >= Ymin and then Y <= Ymax then
@@ -34,32 +35,10 @@ package body Ligne is
 		x2 : Integer := Integer(Float'Rounding(xb));
 		y2 : Integer := Integer(Float'Rounding(yb));
 	begin
-        -- Make false lines. TO correct
-        if x1 < Xmin then
-            x1 := Xmin;
-        end if;
-        if x1 > Xmax then
-            x1 := Xmax;
-        end if;
-        if x2 < Xmin then
-            x2 := Xmin;
-        end if;
-        if x2 > Xmax then
-            x2 := Xmax;
-        end if;
-        if y1 < Ymin then
-            y1 := Ymin;
-        end if;
-        if y1 > Ymax then
-            y1 := Ymax;
-        end if;
-        if y2 < Ymin then
-            y2 := Ymin;
-        end if;
-        if y2 > Ymax then
-            y2 := Ymax;
-        end if;
-
+		-- prevent to draw very big lines
+		if abs(x2 - x1) > 800 or else abs(y2 - y1) > 800 then
+			return;
+		end if;
 
 		dx := x2 - x1;
 		if dx /= 0 then
@@ -249,15 +228,31 @@ package body Ligne is
 		-- le pixel final (x2, y2) n’est pas tracé.
     end;	
 
-    procedure Tracer_Segment_LumVar(Xa, Ya, Xb, Yb : Float; Va, Vb : PixLum) is
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    procedure Tracer_Segment_LumVar(Xa, Ya, Xb, Yb : Float; Val : PixLum) is
 		dx, dy : Integer;
-        dv : Float;
 		e : Integer;
 		x1 : Integer := Integer(Float'Rounding(xa));
 		y1 : Integer := Integer(Float'Rounding(ya));
 		x2 : Integer := Integer(Float'Rounding(xb));
 		y2 : Integer := Integer(Float'Rounding(yb));
-        v : PixLum := Va;
 	begin
         -- Make false lines. TO correct
         if x1 < Xmin then
@@ -286,8 +281,6 @@ package body Ligne is
         end if;
 
 
-		dv := (Float(Va) - Float(Vb)) / sqrt( 1.0 + Float((x2-x1)**2) + Float((y2-y1)**2)); 
-
 		dx := x2 - x1;
 		if dx /= 0 then
 			if dx > 0 then
@@ -301,8 +294,7 @@ package body Ligne is
 							e := dx;
 							dx := e * 2 ; dy := dy * 2 ;  -- e est positif
 							loop  -- déplacements horizontaux
-								Fixe_Pixel(x1, y1, v) ;
-								v := PixLum((Float(v) + dv) );
+								Fixe_Pixel(x1, y1, val) ;
 								x1 := x1 + 1;
 								exit when x1 = x2 ;
 								e := e - dy;
@@ -316,7 +308,7 @@ package body Ligne is
 							e := dy;
 							dy := e * 2 ; dx := dx * 2 ;  -- e est positif
 							loop  -- déplacements verticaux
-								Fixe_Pixel(x1, y1, v) ;
+								Fixe_Pixel(x1, y1, val) ;
 								y1 := y1 + 1;
 								exit when y1 = y2 ;
 								e := e - dx;
@@ -335,7 +327,7 @@ package body Ligne is
 							e := dx;
 							dx := e * 2 ; dy := dy * 2 ;  -- e est positif
 							loop  -- déplacements horizontaux
-								Fixe_Pixel(x1, y1, v) ;
+								Fixe_Pixel(x1, y1, val) ;
 								x1 := x1 + 1;
 								exit when x1 = x2 ;
 								e := e + dy;
@@ -348,7 +340,7 @@ package body Ligne is
 							e := dy;
 							dy := e * 2 ; dx := dx * 2 ;  -- e est négatif
 							loop  -- déplacements verticaux
-								Fixe_Pixel(x1, y1, v) ;
+								Fixe_Pixel(x1, y1, val) ;
 								y1 := y1 - 1;
 								exit when y1 = y2 ;
 								e := e + dx;
@@ -364,7 +356,7 @@ package body Ligne is
 
 					-- vecteur horizontal vers la droite
 					loop
-						Fixe_Pixel(x1, y1, v) ;
+						Fixe_Pixel(x1, y1, val) ;
 						x1 := x1 + 1;
 						exit when x1 = x2 ;
 					end loop;
@@ -381,7 +373,7 @@ package body Ligne is
 							e := dx;
 							dx := e * 2 ; dy := dy * 2 ;  -- e est négatif
 							loop  -- déplacements horizontaux
-								Fixe_Pixel(x1, y1, v) ;
+								Fixe_Pixel(x1, y1, val) ;
 								x1 := x1 - 1;
 								exit when x1 = x2 ;
 								e := e + dy;
@@ -395,7 +387,7 @@ package body Ligne is
 							e := dy;
 							dy := e * 2 ; dx := dx * 2 ;  -- e est positif
 							loop  -- déplacements verticaux
-								Fixe_Pixel(x1, y1, v) ;
+								Fixe_Pixel(x1, y1, val) ;
 								y1 := y1 + 1;
 								exit when y1 = y2 ;
 								e := e + dx;
@@ -414,7 +406,7 @@ package body Ligne is
 							e := dx;
 							dx := e * 2 ; dy := dy * 2 ;  -- e est négatif
 							loop  -- déplacements horizontaux
-								Fixe_Pixel(x1, y1, v) ;
+								Fixe_Pixel(x1, y1, val) ;
 								x1 := x1 - 1;
 								exit when x1 = x2 ;
 								e := e - dy;
@@ -427,7 +419,7 @@ package body Ligne is
 							e := dy;
 							dy := e * 2 ; dx := dx * 2 ;  -- e est négatif
 							loop  -- déplacements verticaux
-								Fixe_Pixel(x1, y1, v) ;
+								Fixe_Pixel(x1, y1, val) ;
 								y1 := y1 - 1;
 								exit when y1 = y2 ;
 								e := e - dx;
@@ -443,7 +435,7 @@ package body Ligne is
 
 					-- vecteur horizontal vers la gauche
 					loop
-						Fixe_Pixel(x1, y1, v) ;
+						Fixe_Pixel(x1, y1, val) ;
 						x1 := x1 - 1;
 						exit when x1 = x2 ;
 					end loop;
@@ -457,7 +449,7 @@ package body Ligne is
 
 					-- vecteur vertical croissant
 					loop
-						Fixe_Pixel(x1, y1, v) ;
+						Fixe_Pixel(x1, y1, val) ;
 						y1 := y1 + 1;
 						exit when y1 = y2 ;
 					end loop;
@@ -466,7 +458,7 @@ package body Ligne is
 
 					-- vecteur vertical décroissant
 					loop
-						Fixe_Pixel(x1, y1, v) ;
+						Fixe_Pixel(x1, y1, val) ;
 						y1 := y1 - 1;
 						exit when y1 = y2 ;
 					end loop;

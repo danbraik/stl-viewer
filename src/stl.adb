@@ -1,8 +1,6 @@
 with Ada.Integer_Text_IO; use Ada.Integer_Text_IO;
-with Ada.Text_IO;
-use Ada.Text_IO;
-with Algebre;
-use Algebre;
+with Ada.Text_IO; use Ada.Text_IO;
+with Algebre; use Algebre;
 with Ada.Characters.Handling;
 with Ada.Strings.Fixed;
 with Ada.Strings.Maps;
@@ -14,19 +12,23 @@ with Ada.Text_IO; -- Text I/O library
    with Ada.Sequential_IO; -- Sequential I/O library
 with Ada.Float_Text_IO;
 with Ada.Streams.Stream_IO;
-with Interfaces;
-use Interfaces;
+with Interfaces; use Interfaces;
 
 package body STL is
 
+	-- Node of a linked list
+	-- Contains a face and an access to the next Node	
     type TFacette is record
-        a,b,c : Vecteur(1..3);
+		face : Facette;
         next : access TFacette;
     end record;
 	type Acc_TFacette is access TFacette;
 
+	-- Linked List of face
 	type ListTF is record
+		-- Access to the first element
 		FirstElt : Acc_TFacette;
+		-- Number of element into the list
 		NbElt : Natural;
 	end record;
 
@@ -58,7 +60,7 @@ package body STL is
 
 
 
-	procedure Chargement_ASCII(Nom_Fichier : String; List : out ListTF) is
+	procedure Chargement_ASCII(Nom_Fichier : String; M : out Maillage) is
 		type State is 
 			(
 				Main,
@@ -69,6 +71,9 @@ package body STL is
 		Current : State := Main;
 		F : Ada.Text_IO.File_Type;
         NouvelleFace : Acc_TFacette;
+		List : ListTF;
+		Iterator : access TFacette;
+		Count : Natural;
 	begin
 
 		List.FirstElt := null;
@@ -91,7 +96,7 @@ package body STL is
 						end if;
 					when Vertex_1 =>
 						if Word = "vertex" then
-        					NouvelleFace.A := (
+        					NouvelleFace.face.P1 := (
 								Float'Value(Get_Next_Word(F)),
 								Float'Value(Get_Next_Word(F)),
 								Float'Value(Get_Next_Word(F)));
@@ -99,7 +104,7 @@ package body STL is
 						end if;
 					when Vertex_2 =>
 						if Word = "vertex" then
-        					NouvelleFace.B := (
+        					NouvelleFace.face.P2 := (
 								Float'Value(Get_Next_Word(F)),
 								Float'Value(Get_Next_Word(F)),
 								Float'Value(Get_Next_Word(F)));
@@ -107,7 +112,7 @@ package body STL is
 						end if;
 					when Vertex_3 =>
 						if Word = "vertex" then
-        					NouvelleFace.C := (
+        					NouvelleFace.face.P3 := (
 								Float'Value(Get_Next_Word(F)),
 								Float'Value(Get_Next_Word(F)),
 								Float'Value(Get_Next_Word(F)));
@@ -117,6 +122,25 @@ package body STL is
 			end;
 		end loop;
 		Close (F);
+
+		-- une fois qu'on a le nombre de facettes on connait la taille du maillage
+		Count := List.NbElt;
+		begin
+	        M := new Tableau_Facette(1..Count);
+		exception
+			when Storage_Error => M := null;
+								  Put_Line(Standard_Error, "Error when loading file : not enough memory.");
+								  return;
+		end;
+
+		Iterator := List.FirstElt;
+		while Iterator /= null loop
+			M(Count) := Iterator.face;
+
+			Count := Count - 1;
+			Iterator := Iterator.Next; 
+		end loop;
+
 	end;
 
 
@@ -141,7 +165,13 @@ package body STL is
 
         Unsigned_32'Read(Input_Stream, NbElt);
 
-        M := new Tableau_Facette(1..Integer'Val(NbElt));
+		begin
+	        M := new Tableau_Facette(1..Integer'Val(NbElt));
+		exception
+			when Storage_Error => M := null;
+								  Put_Line(Standard_Error, "Error when loading file : not enough memory.");
+								  return;
+		end;
 
         while Index <= M'Last loop
             -- read normal vector
@@ -175,7 +205,6 @@ package body STL is
 		Res : Natural;
 		Buffer : String(1..5);
 	begin
-		
 		Open(F, In_File, Fname);
 		For i in Buffer'Range loop
 			Get(F, Buffer(i));
@@ -191,34 +220,25 @@ package body STL is
 	end;
 
 	function Chargement(Nom_Fichier : String) return Maillage is
-		List : ListTF;
-		Iterator : access TFacette;
-		M : Maillage;
-		Count : Natural;
+		M : Maillage := null;
 		Mode : Natural;
 	begin
 		Mode := GetFileMode(Nom_Fichier);
 		if Mode = 0 then -- it is ASCII file
-			Put_Line("Chargement ASCII");
-			Chargement_ASCII(Nom_Fichier, List);
-		
-			Count := List.NbElt;
-			-- une fois qu'on a le nombre de facettes on connait la taille du maillage
-			M := new Tableau_Facette(1..Count);
-
-			Iterator := List.FirstElt;
-			while Iterator /= null loop
-				M(Count).P1 := Iterator.A;
-				M(Count).P2 := Iterator.B;
-				M(Count).P3 := Iterator.C;
-
-				Count := Count - 1;
-				Iterator := Iterator.Next; 
-			end loop;
+			Put_Line("STL file : ASCII format.");
+			Chargement_ASCII(Nom_Fichier, M);
 		elsif Mode = 1 then -- it is binary file
-			Put_Line("Chargement binaire");
+			Put_Line("STL file : binary format.");
 			Chargement_Bin(Nom_Fichier, M);
 		end if;
+
+		-- check if M is null
+		-- if it is, create an empty array
+		if M = null then
+			M := new Tableau_Facette(1..0);
+		end if;
+
+		Put_Line(Integer'Image(M'Length) & " faces loaded.");
 
 		return M;
 	end;

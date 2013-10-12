@@ -13,7 +13,9 @@ package STL is
 
 	type Maillage is access Tableau_Facette;
 
-	-- charge un fichier STL au format ASCII
+	-- Load a STL file (ASCII or binary format)
+	-- raise an exception if the file does not exist
+	-- or in case of I/O failure
 	function Chargement(Nom_Fichier : String) return Maillage;
 
 end;
