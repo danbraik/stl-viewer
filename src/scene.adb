@@ -11,6 +11,7 @@ package body Scene is
 	Phi : Float := 0.0; -- rotation autour de Z
 
 	E : Vecteur(1..3) := (-400.0, -300.0, 400.0); -- position du spectateur
+	CamPosition : Vecteur(1..3);
 	T : Matrice(1..3, 1..3); -- matrice de rotation
 	Ti : Matrice(1..3, 1..3); -- matrice inverse de rotation
 
@@ -20,13 +21,14 @@ package body Scene is
 	begin
 		T := Matrice_Rotations ((1 => -Rho, 2 => -Theta, 3 => -Phi));
 		Ti := Matrice_Rotations_Inverses ((1 => Rho, 2 => Theta, 3 => Phi));
+		-- camera is first placed at (0, 0, -R);
+		CamPosition := T * (0.0, 0.0, -R); 
 	end Modification_Matrice_Rotation;
 
 
 	function Position_Camera return Vecteur is
 	begin
-		-- camera is first placed at (0, 0, -R);
-		return T * (0.0, 0.0, -R); 
+		return CamPosition;
 	end;
 
 
