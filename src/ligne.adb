@@ -34,20 +34,6 @@ package body Ligne is
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     procedure Tracer_Segment_LumVar(Xa, Ya, Xb, Yb : Float; Val : PixLum) is
 		dx, dy : Integer;
 		e : Integer;

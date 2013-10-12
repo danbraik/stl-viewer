@@ -38,6 +38,12 @@ package Algebre is
 	-- cross product
 	function "*" (X, Y : Vecteur) return Vecteur;
 
+	-- get the length
+	function length(X : Vecteur) return Float;
+
+	-- normalize the vecteur (modify it)
+	procedure normalize(X : in out Vecteur);
+
 	-- la fonction Projection calcule les coordonnees 2D (sur l'ecran) d'un point
 	-- de la scene 3D
 	-- elle utilise les arguments suivants :

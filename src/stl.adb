@@ -35,10 +35,11 @@ package body STL is
 
 
 	-- Complete face data : compute the normal
-	procedure FinalizeFace(face : out Facette) is
+	procedure FinalizeFace(face : in out Facette) is
 	begin
 		-- * is the cross product
 		face.N := (face.P2 - face.P1) * (face.P3 - face.P1);
+		normalize(face.N);
 	end;
 
 
