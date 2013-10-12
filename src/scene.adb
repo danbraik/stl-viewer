@@ -55,9 +55,7 @@ package body Scene is
 
 
 	function Nombre_De_Facettes return Natural is
-		N : Natural;
 	begin
-		-- a faire
 		return M'Length;
 	end;
 
