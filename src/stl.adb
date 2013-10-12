@@ -1,8 +1,6 @@
 with Ada.Integer_Text_IO; use Ada.Integer_Text_IO;
-with Ada.Text_IO;
-use Ada.Text_IO;
-with Algebre;
-use Algebre;
+with Ada.Text_IO; use Ada.Text_IO;
+with Algebre; use Algebre;
 with Ada.Characters.Handling;
 with Ada.Strings.Fixed;
 with Ada.Strings.Maps;
@@ -14,11 +12,11 @@ with Ada.Text_IO; -- Text I/O library
    with Ada.Sequential_IO; -- Sequential I/O library
 with Ada.Float_Text_IO;
 with Ada.Streams.Stream_IO;
-with Interfaces;
-use Interfaces;
+with Interfaces; use Interfaces;
 
 package body STL is
 
+	-- 
     type TFacette is record
         a,b,c : Vecteur(1..3);
         next : access TFacette;

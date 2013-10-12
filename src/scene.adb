@@ -34,7 +34,6 @@ package body Scene is
         f : Facette;
         PosCam : Vecteur := Position_Camera;
 	begin
-		-- a faire
         f := M(Index_Facette);
 
         P1 := Projection(f.P1, PosCam, E, Ti);
@@ -61,7 +60,7 @@ package body Scene is
         case Index is
             when 1 => R := R + Increment;
 					  if R < 0.0 then
-null;--						  R := 0.0;
+						  R := 0.0;
 					  end if;
             when 2 => Rho := Rho + Increment;
             when 3 => Theta := Theta + Increment;
