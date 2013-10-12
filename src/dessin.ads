@@ -7,6 +7,7 @@ package Dessin is
 	SCRH : Constant := 600; -- hauteur constante de l'ecran
 	subtype Pixel_X is Integer range 1..SCRW; -- type coordonnee X d'un pixel
 	subtype Pixel_Y is Integer range 1..SCRH; -- type coordonnee Y d'un pixel
+	-- Type which represent a luminance of a pixel
 	subtype PixLum is Uint8 range 0..255;
 
 	-- les deux variables suivantes ne vous sont pas utiles, vous pouvez les ignorer
