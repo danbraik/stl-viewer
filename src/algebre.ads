@@ -29,6 +29,15 @@ package Algebre is
 	-- produit matrice matrice
     function "*" (A, B : Matrice) return Matrice;
 
+	-- add operation
+	function "+" (X, Y : Vecteur) return Vecteur;
+
+	-- substract operation
+	function "-" (X, Y : Vecteur) return Vecteur;
+
+	-- cross product
+	function "*" (X, Y : Vecteur) return Vecteur;
+
 	-- la fonction Projection calcule les coordonnees 2D (sur l'ecran) d'un point
 	-- de la scene 3D
 	-- elle utilise les arguments suivants :

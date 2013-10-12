@@ -79,6 +79,27 @@ package body Algebre is
 		return Z;
 	end;
 
+	-- add operation
+	function "+" (X, Y : Vecteur) return Vecteur is
+	begin
+		return (X(1) + Y(1), X(2) + Y(2), X(3) + Y(3));
+	end;	
+
+	-- substract operation
+	function "-" (X, Y : Vecteur) return Vecteur is
+	begin
+		return (X(1) - Y(1), X(2) - Y(2), X(3) - Y(3));
+	end;	
+
+	-- cross product
+	function "*" (X, Y : Vecteur) return Vecteur is
+	begin
+		return (X(2) * Y(3) - X(3) * Y(2),
+				X(3) * Y(1) - X(1) * Y(3),
+				X(1) * Y(2) - X(2) * Y(1));
+	end;
+
+
 
 	-- Calculates coordinates relative to the camera
 	-- return a 3D vector, Z indicates the distance 
