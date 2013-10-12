@@ -1,26 +1,9 @@
-with Dessin;
+with ZBuffer; use ZBuffer;
 with Ada.Numerics.Elementary_Functions; use Ada.Numerics.Elementary_Functions;
 
 package body Ligne is
 
-	Xmin : Integer := Dessin.Pixel_X'First;
-	Xmax : Integer := Dessin.Pixel_X'Last;
-	Ymin : Integer := Dessin.Pixel_Y'First;
-    Ymax : Integer := Dessin.Pixel_Y'Last;
     
-	-- Draw a pixel on screen
-	-- Can be called with an invalid position
-    procedure Trace_Pixel(X, Y : Integer) is
-    begin
-          Fixe_Pixel(X, Y, 255);
-    end;
-
-    procedure Fixe_Pixel(X, Y : Integer; Val : PixLum) is
-    begin
-       if X >= Xmin and then X <= Xmax and then Y >= Ymin and then Y <= Ymax then
-          Dessin.Fixe_Pixel(X, Y, Val);
-       end if; 
-    end;
 
 
 	--code entierement repris de wikipedia
@@ -29,6 +12,235 @@ package body Ligne is
 	begin
 		Tracer_Segment_LumVar(xa, ya, xb, yb, 255);
     end;	
+
+
+ procedure Tracer_Segment_LumVar_Z(Xa, Ya, Za, Xb, Yb, Zb : Float; Val : PixLum) is
+		dx, dy : Integer;
+		dz : Float;
+		e : Integer;
+		x1 : Integer; 
+		y1 : Integer;
+		x2 : Integer;
+		y2 : Integer;
+		z1 : Float := Za;
+		z2 : Float := Zb;
+		len : Float := sqrt( (xa-xb)**2+(ya-yb)**2+(za-zb)**2);
+	begin
+
+	-- OR use LEN
+		-- prevent to draw very big lines
+		if abs(Xb - Xa) > 800.0 or else abs(Yb - Ya) > 800.0 then
+			return;
+		end if;
+
+		x1 := Integer(Float'Rounding(xa));
+		y1 := Integer(Float'Rounding(ya));
+		x2 := Integer(Float'Rounding(xb));
+		y2 := Integer(Float'Rounding(yb));
+
+		
+
+		dx := x2 - x1;
+		if dx /= 0 then
+			if dx > 0 then
+				dy := y2 - y1;
+				dz := (z2 - z1) / len;
+
+				if dy /= 0 then
+					if dy > 0 then
+						-- vecteur oblique dans le 1er quadran
+
+						if dx >= dy then
+							-- vecteur diagonal ou oblique proche de l’horizontale, dans le 1er octant
+							e := dx;
+							dx := e * 2 ; dy := dy * 2 ;  -- e est positif
+							loop  -- déplacements horizontaux
+								DrawPixel(x1, y1, z1, val) ;
+								x1 := x1 + 1;
+								exit when x1 = x2 ;
+								e := e - dy;
+								if e < 0 then
+									y1 := y1 + 1 ;  -- déplacement diagonal
+									e := e + dx ;
+								end if;
+							end loop ;
+						else
+							-- vecteur oblique proche de la verticale, dans le 2nd octant
+							e := dy;
+							dy := e * 2 ; dx := dx * 2 ;  -- e est positif
+							loop  -- déplacements verticaux
+								DrawPixel(x1, y1, z1, val) ;
+								y1 := y1 + 1;
+								exit when y1 = y2 ;
+								e := e - dx;
+								if e < 0 then
+									x1 := x1 + 1 ;  -- déplacement diagonal
+									e := e + dy ;
+								end if;
+							end loop ;
+						end if;
+
+					else  -- dy < 0 (et dx > 0)
+						-- vecteur oblique dans le 4e cadran
+
+						if dx >= -dy then
+							-- vecteur diagonal ou oblique proche de l’horizontale, dans le 8e octant
+							e := dx;
+							dx := e * 2 ; dy := dy * 2 ;  -- e est positif
+							loop  -- déplacements horizontaux
+								DrawPixel(x1, y1, z1, val) ;
+								x1 := x1 + 1;
+								exit when x1 = x2 ;
+								e := e + dy;
+								if e < 0 then
+									y1 := y1 - 1 ;  -- déplacement diagonal
+									e := e + dx ;
+								end if;
+							end loop ;
+						else  -- vecteur oblique proche de la verticale, dans le 7e octant
+							e := dy;
+							dy := e * 2 ; dx := dx * 2 ;  -- e est négatif
+							loop  -- déplacements verticaux
+								DrawPixel(x1, y1, z1, val) ;
+								y1 := y1 - 1;
+								exit when y1 = y2 ;
+								e := e + dx;
+								if e > 0 then
+									x1 := x1 + 1 ;  -- déplacement diagonal
+									e := e + dy ;
+								end if;
+							end loop ;
+						end if;
+
+					end if;
+				else  -- dy = 0 (et dx > 0)
+
+					-- vecteur horizontal vers la droite
+					loop
+						DrawPixel(x1, y1, z1, val) ;
+						x1 := x1 + 1;
+						exit when x1 = x2 ;
+					end loop;
+
+				end if;
+			else  -- dx < 0
+				dy := y2 - y1;
+				if dy /= 0 then
+					if dy > 0 then
+						-- vecteur oblique dans le 2nd quadran
+
+						if -dx >= dy then
+							-- vecteur diagonal ou oblique proche de l’horizontale, dans le 4e octant
+							e := dx;
+							dx := e * 2 ; dy := dy * 2 ;  -- e est négatif
+							loop  -- déplacements horizontaux
+								DrawPixel(x1, y1, z1, val) ;
+								x1 := x1 - 1;
+								exit when x1 = x2 ;
+								e := e + dy;
+								if e >= 0 then
+									y1 := y1 + 1 ;  -- déplacement diagonal
+									e := e + dx ;
+								end if;
+							end loop ;
+						else
+							-- vecteur oblique proche de la verticale, dans le 3e octant
+							e := dy;
+							dy := e * 2 ; dx := dx * 2 ;  -- e est positif
+							loop  -- déplacements verticaux
+								DrawPixel(x1, y1, z1, val) ;
+								y1 := y1 + 1;
+								exit when y1 = y2 ;
+								e := e + dx;
+								if e <= 0 then
+									x1 := x1 - 1 ;  -- déplacement diagonal
+									e := e + dy ;
+								end if;
+							end loop ;
+						end if;
+
+					else  -- dy < 0 (et dx < 0)
+						-- vecteur oblique dans le 3e cadran
+
+						if dx <= dy then
+							-- vecteur diagonal ou oblique proche de l’horizontale, dans le 5e octant
+							e := dx;
+							dx := e * 2 ; dy := dy * 2 ;  -- e est négatif
+							loop  -- déplacements horizontaux
+								DrawPixel(x1, y1, z1, val) ;
+								x1 := x1 - 1;
+								exit when x1 = x2 ;
+								e := e - dy;
+								if e >= 0 then
+									y1 := y1 - 1 ;  -- déplacement diagonal
+									e := e + dx ;
+								end if;
+							end loop ;
+						else  -- vecteur oblique proche de la verticale, dans le 6e octant
+							e := dy;
+							dy := e * 2 ; dx := dx * 2 ;  -- e est négatif
+							loop  -- déplacements verticaux
+								DrawPixel(x1, y1, z1, val) ;
+								y1 := y1 - 1;
+								exit when y1 = y2 ;
+								e := e - dx;
+								if e >= 0 then
+									x1 := x1 - 1 ;  -- déplacement diagonal
+									e := e + dy ;
+								end if;
+							end loop ;
+						end if;
+
+					end if;
+				else  -- dy = 0 (et dx < 0)
+
+					-- vecteur horizontal vers la gauche
+					loop
+						DrawPixel(x1, y1, z1, val) ;
+						x1 := x1 - 1;
+						exit when x1 = x2 ;
+					end loop;
+
+				end if;
+			end if;
+		else  -- dx = 0
+			dy := y2 - y1;
+			if dy /= 0 then
+				if dy > 0 then
+
+					-- vecteur vertical croissant
+					loop
+						DrawPixel(x1, y1, z1, val) ;
+						y1 := y1 + 1;
+						exit when y1 = y2 ;
+					end loop;
+
+				else  -- dy < 0 (et dx = 0)
+
+					-- vecteur vertical décroissant
+					loop
+						DrawPixel(x1, y1, z1, val) ;
+						y1 := y1 - 1;
+						exit when y1 = y2 ;
+					end loop;
+
+				end if;
+			end if;
+		end if;
+		-- le pixel final (x2, y2) n’est pas tracé.
+	end;
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -66,7 +278,7 @@ package body Ligne is
 							e := dx;
 							dx := e * 2 ; dy := dy * 2 ;  -- e est positif
 							loop  -- déplacements horizontaux
-								Fixe_Pixel(x1, y1, val) ;
+								DrawPixel(x1, y1, val) ;
 								x1 := x1 + 1;
 								exit when x1 = x2 ;
 								e := e - dy;
@@ -80,7 +292,7 @@ package body Ligne is
 							e := dy;
 							dy := e * 2 ; dx := dx * 2 ;  -- e est positif
 							loop  -- déplacements verticaux
-								Fixe_Pixel(x1, y1, val) ;
+								DrawPixel(x1, y1, val) ;
 								y1 := y1 + 1;
 								exit when y1 = y2 ;
 								e := e - dx;
@@ -99,7 +311,7 @@ package body Ligne is
 							e := dx;
 							dx := e * 2 ; dy := dy * 2 ;  -- e est positif
 							loop  -- déplacements horizontaux
-								Fixe_Pixel(x1, y1, val) ;
+								DrawPixel(x1, y1, val) ;
 								x1 := x1 + 1;
 								exit when x1 = x2 ;
 								e := e + dy;
@@ -112,7 +324,7 @@ package body Ligne is
 							e := dy;
 							dy := e * 2 ; dx := dx * 2 ;  -- e est négatif
 							loop  -- déplacements verticaux
-								Fixe_Pixel(x1, y1, val) ;
+								DrawPixel(x1, y1, val) ;
 								y1 := y1 - 1;
 								exit when y1 = y2 ;
 								e := e + dx;
@@ -128,7 +340,7 @@ package body Ligne is
 
 					-- vecteur horizontal vers la droite
 					loop
-						Fixe_Pixel(x1, y1, val) ;
+						DrawPixel(x1, y1, val) ;
 						x1 := x1 + 1;
 						exit when x1 = x2 ;
 					end loop;
@@ -145,7 +357,7 @@ package body Ligne is
 							e := dx;
 							dx := e * 2 ; dy := dy * 2 ;  -- e est négatif
 							loop  -- déplacements horizontaux
-								Fixe_Pixel(x1, y1, val) ;
+								DrawPixel(x1, y1, val) ;
 								x1 := x1 - 1;
 								exit when x1 = x2 ;
 								e := e + dy;
@@ -159,7 +371,7 @@ package body Ligne is
 							e := dy;
 							dy := e * 2 ; dx := dx * 2 ;  -- e est positif
 							loop  -- déplacements verticaux
-								Fixe_Pixel(x1, y1, val) ;
+								DrawPixel(x1, y1, val) ;
 								y1 := y1 + 1;
 								exit when y1 = y2 ;
 								e := e + dx;
@@ -178,7 +390,7 @@ package body Ligne is
 							e := dx;
 							dx := e * 2 ; dy := dy * 2 ;  -- e est négatif
 							loop  -- déplacements horizontaux
-								Fixe_Pixel(x1, y1, val) ;
+								DrawPixel(x1, y1, val) ;
 								x1 := x1 - 1;
 								exit when x1 = x2 ;
 								e := e - dy;
@@ -191,7 +403,7 @@ package body Ligne is
 							e := dy;
 							dy := e * 2 ; dx := dx * 2 ;  -- e est négatif
 							loop  -- déplacements verticaux
-								Fixe_Pixel(x1, y1, val) ;
+								DrawPixel(x1, y1, val) ;
 								y1 := y1 - 1;
 								exit when y1 = y2 ;
 								e := e - dx;
@@ -207,7 +419,7 @@ package body Ligne is
 
 					-- vecteur horizontal vers la gauche
 					loop
-						Fixe_Pixel(x1, y1, val) ;
+						DrawPixel(x1, y1, val) ;
 						x1 := x1 - 1;
 						exit when x1 = x2 ;
 					end loop;
@@ -221,7 +433,7 @@ package body Ligne is
 
 					-- vecteur vertical croissant
 					loop
-						Fixe_Pixel(x1, y1, val) ;
+						DrawPixel(x1, y1, val) ;
 						y1 := y1 + 1;
 						exit when y1 = y2 ;
 					end loop;
@@ -230,7 +442,7 @@ package body Ligne is
 
 					-- vecteur vertical décroissant
 					loop
-						Fixe_Pixel(x1, y1, val) ;
+						DrawPixel(x1, y1, val) ;
 						y1 := y1 - 1;
 						exit when y1 = y2 ;
 					end loop;

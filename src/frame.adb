@@ -11,6 +11,8 @@ with Ada.Integer_Text_IO; use Ada.Integer_Text_IO;
 with Ada.Float_Text_IO; use Ada.Float_Text_IO;
 with Ada.Numerics.Elementary_Functions; use Ada.Numerics.Elementary_Functions;
 
+with ZBuffer;
+
 package body Frame is
 
 	procedure Calcul_Image is
@@ -21,6 +23,9 @@ package body Frame is
 		Tmp, Tmp2 : Vecteur(1..3);
 		
 	begin
+
+		ZBuffer.Clear;
+
 		-- for each Facette
         for faceIndex in 1..Scene.Nombre_De_Facettes loop
             Scene.Projection_Facette(faceIndex, Pts(1), Pts(2), Pts(3), Pts(4));
@@ -42,14 +47,14 @@ package body Frame is
 					val := 255;
 				end if;
 
-				Ligne.Tracer_Segment_LumVar(Pts(1)(1), Pts(1)(2), 
-											Pts(2)(1), Pts(2)(2), val);
+				Ligne.Tracer_Segment_LumVar_Z(Pts(1)(1), Pts(1)(2), Pts(1)(3),
+											Pts(2)(1), Pts(2)(2), Pts(2)(3), val);
 	            
-				Ligne.Tracer_Segment_LumVar(Pts(2)(1), Pts(2)(2), 
-											Pts(3)(1), Pts(3)(2), val);
+				Ligne.Tracer_Segment_LumVar_Z(Pts(2)(1), Pts(2)(2),  Pts(2)(3),
+											Pts(3)(1), Pts(3)(2), Pts(3)(3), val);
 
-	            Ligne.Tracer_Segment_LumVar(Pts(3)(1), Pts(3)(2), 
-											Pts(1)(1), Pts(1)(2), val);
+	            Ligne.Tracer_Segment_LumVar_Z(Pts(3)(1), Pts(3)(2), Pts(3)(3),
+											Pts(1)(1), Pts(1)(2), Pts(1)(3), val);
 
 				if Params.DisplayNormals then
             		Ligne.Tracer_Segment(Pts(1)(1), Pts(1)(2), 
