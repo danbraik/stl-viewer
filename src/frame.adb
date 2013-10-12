@@ -31,12 +31,16 @@ package body Frame is
 				--for i in 1..3 loop
 				--   Put(Pts(i)(1));Put(Pts(i)(2));Put(Pts(i)(3));New_Line;
 				--end loop;
-				
-				Tmp := (Pts(1));
-				normalize(Tmp);
-				Tmp2 :=  Pts(1) - Pts(4);
-				normalize(Tmp2);
-				val := PixLum( 255.0-  (length (Tmp2   * Tmp )) * 255.0 );
+
+				if Params.EnableLighting then				
+					Tmp := (Pts(1));
+					normalize(Tmp);
+					Tmp2 :=  Pts(1) - Pts(4);
+					normalize(Tmp2);
+					val := PixLum( 255.0-  (length (Tmp2   * Tmp )) * 255.0 );
+				else
+					val := 255;
+				end if;
 
 				Ligne.Tracer_Segment_LumVar(Pts(1)(1), Pts(1)(2), 
 											Pts(2)(1), Pts(2)(2), val);
@@ -47,24 +51,11 @@ package body Frame is
 	            Ligne.Tracer_Segment_LumVar(Pts(3)(1), Pts(3)(2), 
 											Pts(1)(1), Pts(1)(2), val);
 
-
 				if Params.DisplayNormals then
-
---				   Put(Pts(4)(1));Put(Pts(4)(2));Put(Pts(4)(3));New_Line;
-            	Ligne.Tracer_Segment(Pts(1)(1), Pts(1)(2), 
-                					 Pts(4)(1), Pts(4)(2));
-
+            		Ligne.Tracer_Segment(Pts(1)(1), Pts(1)(2), 
+                						 Pts(4)(1), Pts(4)(2));
 				end if;
 
-
-            	--Ligne.Tracer_Segment(Pts(1)(1), Pts(1)(2), 
-                --					 Pts(2)(1), Pts(2)(2));
-
-            	--Ligne.Tracer_Segment(Pts(2)(1), Pts(2)(2), 
-				--	                 Pts(3)(1), Pts(3)(2));
-
-            	--Ligne.Tracer_Segment(Pts(3)(1), Pts(3)(2), 
-				--	                 Pts(1)(1), Pts(1)(2));
            	end if;
 
         end loop;
