@@ -101,8 +101,8 @@ package body Algebre is
     	    tmp := E(3) / D(3); 
 			Resultat(1) := tmp * D(1) - E(1);
 			Resultat(2) := tmp * D(2) - E(2);
-			Resultat(3) := D(3);
 		end if;
+		Resultat(3) := D(3);
 
 		return Resultat;
 	end;
