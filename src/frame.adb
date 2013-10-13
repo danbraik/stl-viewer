@@ -11,7 +11,8 @@ with Ada.Integer_Text_IO; use Ada.Integer_Text_IO;
 with Ada.Float_Text_IO; use Ada.Float_Text_IO;
 with Ada.Numerics.Elementary_Functions; use Ada.Numerics.Elementary_Functions;
 
-with ZBuffer;
+with ZBuffer; use ZBuffer;
+with Adv_Draw; use Adv_Draw;
 
 package body Frame is
 
@@ -24,42 +25,54 @@ package body Frame is
 		
 	begin
 
+		-- Reset the buffer to draw a new frame
 		ZBuffer.Clear;
 
-		-- for each Facette
+		-- For each Facette
         for faceIndex in 1..Scene.Nombre_De_Facettes loop
             Scene.Projection_Facette(faceIndex, Pts(1), Pts(2), Pts(3), Pts(4));
 
-           	if Pts(1)(3) > 0.0 and then Pts(2)(3) > 0.0 and then Pts(3)(3) > 0.0 then 
+			-- Test if the face is enterly in front of camera
+           	if Pts(1)(3) > 0.0 and then 
+				Pts(2)(3) > 0.0 and then 
+				Pts(3)(3) > 0.0 then 
 
 				-- debug
 				--for i in 1..3 loop
 				--   Put(Pts(i)(1));Put(Pts(i)(2));Put(Pts(i)(3));New_Line;
 				--end loop;
 
+				-- Compute the face luminance
 				if Params.EnableLighting then				
-					--Tmp := (Pts(1));
-					--normalize(Tmp);
-					--Tmp2 :=  Pts(1) - Pts(4);
-					--normalize(Tmp2);
-					--val := PixLum( 255.0-  (length (Tmp2   * Tmp )) * 255.0 );
-					val :=PixLum(255.0-exp(-Pts(1)(3)*0.102)*255.0);
+					Tmp := (Pts(1) );
+					normalize(Tmp);
+					Tmp2 :=  Pts(1) - Pts(4);
+					normalize(Tmp2);
+					val := PixLum(exp(-( (length (Tmp2   * Tmp )*2.0) )) * 255.0 );
+					--val :=PixLum(exp(-Pts(1)(3)*0.102)*255.0);
 				else
 					val := 255;
 				end if;
 
-				Ligne.Tracer_Segment_LumVar_Z(Pts(1)(1), Pts(1)(2), Pts(1)(3),
+
+				-- Draw the triangle (Fill or Wire mode)
+				if Params.FillTriangles then
+					DrawFilledTriangle(Pts(1), Pts(2), Pts(3), val);
+				else
+					Ligne.Tracer_Segment_LumVar_Z(Pts(1)(1), Pts(1)(2), Pts(1)(3),
 											Pts(2)(1), Pts(2)(2), Pts(2)(3), val);
 	            
-				Ligne.Tracer_Segment_LumVar_Z(Pts(2)(1), Pts(2)(2),  Pts(2)(3),
+					Ligne.Tracer_Segment_LumVar_Z(Pts(2)(1), Pts(2)(2),  Pts(2)(3),
 											Pts(3)(1), Pts(3)(2), Pts(3)(3), val);
 
-	            Ligne.Tracer_Segment_LumVar_Z(Pts(3)(1), Pts(3)(2), Pts(3)(3),
+	            	Ligne.Tracer_Segment_LumVar_Z(Pts(3)(1), Pts(3)(2), Pts(3)(3),
 											Pts(1)(1), Pts(1)(2), Pts(1)(3), val);
+				end if;
 
+				-- Draw the face normal (from the first vertex)
 				if Params.DisplayNormals then
-            		Ligne.Tracer_Segment(Pts(1)(1), Pts(1)(2), 
-                						 Pts(4)(1), Pts(4)(2));
+            		Ligne.Tracer_Segment_LumVar_Z(Pts(1)(1), Pts(1)(2), Pts(1)(3), 
+                						          Pts(4)(1), Pts(4)(2), Pts(4)(3), 228);
 				end if;
 
            	end if;
