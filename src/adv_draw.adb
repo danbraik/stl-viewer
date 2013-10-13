@@ -4,15 +4,17 @@ with Algebre; use Algebre;
 package body Adv_Draw is
 
 
-	function plop(A, B : Vecteur ; x, y : Float) return Float is
+	-- Compute an intermediate result
+	function Plop(A, B : Vecteur ; x, y : Float) return Float is
 	begin
 		return (A(2) - B(2))*x + (B(1) - A(1))*y + A(1)*B(2) - B(1)*A(2);
 	end;
 
+	-- see the algo at
 	-- http://courses.cms.caltech.edu/cs171/barycentric.pdf
 	procedure DrawFilledTriangle(A, B, C : Vecteur ; Val : PixLum) is
 		xmi, xma, ymi, yma : Integer;
-		l1, l2, l3, xx, yy, tmp : Float;
+		l1, l2, l3, xx, yy : Float;
 		t1, t2, t3 : Float;
 	begin
 		-- compute bounding box
@@ -68,7 +70,7 @@ package body Adv_Draw is
 			end if;
 		end if;
 
--- clip bounding box with canvas size
+		-- clip bounding box with canvas size
 		if xmi < Pixel_X'First then
 			xmi := Pixel_X'First;
 		end if;
@@ -82,20 +84,23 @@ package body Adv_Draw is
 			yma := Pixel_Y'Last;
 		end if;
 
-		if xma = xmi or else yma = ymi then
+		-- if the bounding box is actually out of screen
+		-- stop the algo
+		if xma < xmi or else yma < ymi then
 			return;
 		end if;
--- pre-compute denominators
+		
+		-- pre-compute denominators
 		-- if they are nul, so the triangle is degenarate
-		t1 := plop(B,C,A(1), A(2));
+		t1 := Plop(B,C,A(1), A(2));
 		if t1 = 0.0 then
 			return;
 		end if;
-		t2 := plop(C,A,B(1), B(2));
+		t2 := Plop(C,A,B(1), B(2));
 		if t2 = 0.0 then
 			return;
 		end if;
-		t3 := plop(A,B,C(1), C(2));
+		t3 := Plop(A,B,C(1), C(2));
 		if t2 = 0.0 then
 			return;
 		end if;
@@ -106,21 +111,20 @@ package body Adv_Draw is
 				xx := Float(x);
 				yy := Float(y);
 
-				
-				l1 := plop(B,C, xx, yy) / t1; 
-				l2 := plop(C,A, xx, yy) / t2;
-				l3 := plop(A,B, xx, yy) / t3;
+				-- compute barycentric coefficients
+				l1 := Plop(B,C, xx, yy) / t1; 
+				l2 := Plop(C,A, xx, yy) / t2;
+				l3 := Plop(A,B, xx, yy) / t3;
 
-
-				if 0.0 <= l1 and l1 <= 1.0 and 0.0 <= l2 and l2 <= 1.0 and 0.0 <= l3 and l3 <= 1.0 then
-				--	DrawPixel(X, Y, (A(3)+B(3)+C(3))/3.0, Val);
+				-- Test if the pixel is inside the triangle
+				if 0.0 <= l1 and then l1 <= 1.0 and then
+					0.0 <= l2 and then l2 <= 1.0 and then
+					0.0 <= l3 and then l3 <= 1.0 then
+					-- interpolate the Z-depth and draw the pixel
 					DrawPixel(X, Y, l1*A(3)+l2*B(3)+l3*C(3), Val);
-					--DrawPixel(X, Y, Val);
 				end if;
-
 			end loop;
 		end loop;
-
 
 	end;
 

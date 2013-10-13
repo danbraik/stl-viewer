@@ -4,6 +4,7 @@ package Params is
 
 	DisplayNormals : Boolean := False;
 	EnableLighting : Boolean := True;
+	FillTriangles  : Boolean := True;
 
 	
 
