@@ -50,18 +50,8 @@ procedure Visualiseur is
 	use type C.int;
 
 begin
-	-- display info
 	Put_Line("3D STL Viewer"); New_Line;
-	Put_Line("Control keys :");
-	Put_Line("     Up, down, right, left, H, L : move camera");
-	Put_Line("     Page up, page down : Medium Zoom/Dezoom");
-	Put_line("     P, M : Little Zoom/Dezoom");
-	Put_Line("     E : Toggle lighting");
-	Put_Line("     R : Change lighting mode");
-	Put_Line("     N : Toggle displaying face normals");
-	Put_Line("     F : Toggle display mode (Wire or Fill)");
-	New_Line;	
-
+	
 	-- on commence par charger le maillage
 	if Argument_Count /= 1 then
 		Put_Line(Standard_Error, "usage : " & Command_Name & " file.stl");
@@ -73,11 +63,30 @@ begin
 	begin
 		Scene.Ajout_Maillage(Chargement(Argument(1)));
 	exception
-		when Name_Error => Put_Line(Standard_Error, "No such file : " & Argument(1));
-		Set_Exit_Status(Failure);
-		return;
+		when Name_Error => 
+			Put_Line(Standard_Error, "Loading : No such file : " & Argument(1));
+			Set_Exit_Status(Failure);
+			return;
+		when Use_Error =>
+			Put_Line(Standard_Error, "Loading : Permission denied to open this file.");
+			Set_Exit_Status(Failure);
+			return;
+		when others =>
+			Put_Line(Standard_Error, "Loading : Unknown error.");
+			Set_Exit_Status(Failure);
+			return;
 	end;
 
+	-- display info
+	Put_Line("Control keys :");
+	Put_Line("     Up, down, right, left, H, L : move camera");
+	Put_Line("     Page up, page down : Medium Zoom/Dezoom");
+	Put_line("     P, M : Little Zoom/Dezoom");
+	Put_Line("     E : Toggle lighting");
+	Put_Line("     R : Change lighting mode");
+	Put_Line("     N : Toggle displaying face normals");
+	Put_Line("     F : Toggle display mode (Wire or Fill)");
+	New_Line;	
 
 	-- on continue en initialisant l'affichage
 	for I in cmap'Range loop

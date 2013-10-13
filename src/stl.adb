@@ -139,9 +139,10 @@ package body STL is
 		begin
 	        M := new Tableau_Facette(1..Count);
 		exception
-			when Storage_Error => M := null;
-								  Put_Line(Standard_Error, "Error when loading file : not enough memory.");
-								  return;
+			when Storage_Error => 
+				M := null;
+				Put_Line(Standard_Error, "Error when loading file : not enough memory.");
+				return;
 		end;
 
 		Iterator := List.FirstElt;
@@ -170,44 +171,50 @@ package body STL is
             Nom_Fichier);
         Input_Stream := Ada.Streams.Stream_IO.Stream(Input_File);
 
-		For i in 1..80 loop
-		   Integer_8'Read(Input_Stream, Char);
-		end loop;
-
-        Unsigned_32'Read(Input_Stream, NbElt);
-
 		begin
+			-- read header
+			For i in 1..80 loop
+		   	   Integer_8'Read(Input_Stream, Char);
+			end loop;
+
+			-- read number of faces
+        	Unsigned_32'Read(Input_Stream, NbElt);
 	        M := new Tableau_Facette(1..Integer'Val(NbElt));
+
+        	while Index <= M'Last loop
+            	-- read normal vector
+            	For c in 1..3 loop
+                	Float'Read(Input_Stream, TmpF);
+            	end loop;
+            	-- read vertex 1
+            	For c in 1..3 loop
+                	Float'Read(Input_Stream, M(Index).P1(c));
+            	end loop;
+            	-- read vertex 2
+            	For c in 1..3 loop
+                	Float'Read(Input_Stream, M(Index).P2(c));
+            	end loop;
+            	-- read vertex 3
+            	For c in 1..3 loop
+                	Float'Read(Input_Stream, M(Index).P3(c));
+            	end loop;
+            	-- read byte count
+            	Integer_16'Read(Input_Stream, I16);
+
+				FinalizeFace(M(Index));
+            	Index := Index + 1;
+        	end loop;
 		exception
-			when Storage_Error => M := null;
-								  Put_Line(Standard_Error, "Error when loading file : not enough memory.");
-								  return;
+			when Storage_Error => 
+				M := null;
+				Put_Line(Standard_Error, "Error when loading file : not enough memory.");
+			when End_Error => 
+				M := null;
+				Put_Line(Standard_Error, "Error when loading file : file is too short.");
+			when others => 
+				M := null;
+				Put_Line(Standard_Error, "Error when loading file : unknown error.");
 		end;
-
-        while Index <= M'Last loop
-            -- read normal vector
-            For c in 1..3 loop
-                Float'Read(Input_Stream, TmpF);
-            end loop;
-            -- read vertex 1
-            For c in 1..3 loop
-                Float'Read(Input_Stream, M(Index).P1(c));
-            end loop;
-            -- read vertex 2
-            For c in 1..3 loop
-                Float'Read(Input_Stream, M(Index).P2(c));
-            end loop;
-            -- read vertex 3
-            For c in 1..3 loop
-                Float'Read(Input_Stream, M(Index).P3(c));
-            end loop;
-            -- read byte count
-            Integer_16'Read(Input_Stream, I16);
-
-			FinalizeFace(M(Index));
-
-            Index := Index + 1;
-        end loop;
 		
         Ada.Streams.Stream_IO.Close(Input_File);
 	end;
@@ -252,6 +259,7 @@ package body STL is
 		end if;
 
 		Put_Line(Integer'Image(M'Length) & " faces loaded.");
+		New_Line;
 
 		return M;
 	end;
