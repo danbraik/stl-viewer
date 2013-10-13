@@ -16,6 +16,7 @@ with Dessin; use Dessin;
 with Frame; use Frame;
 with STL; use STL;
 with Scene;
+with Params;
 
 with Ada.Command_line; use Ada.Command_Line;
 
@@ -139,6 +140,14 @@ begin
 							Scene.Modification_Coordonnee_Camera(1, -5.0);
 						when SDL.Keysym.K_PAGEDOWN =>
 							Scene.Modification_Coordonnee_Camera(1, 5.0);
+						when SDL.Keysym.K_E =>
+							Params.EnableLighting := not Params.EnableLighting;
+						when SDL.Keysym.K_R =>
+							Params.LightingMode := Params.LightingMode + 1 mod 3;
+						when SDL.Keysym.K_N =>
+							Params.DisplayNormals := not Params.DisplayNormals;
+						when SDL.Keysym.K_F =>
+							Params.FillTriangles := not Params.FillTriangles;
 						when others =>
 							null;
 					end case;
