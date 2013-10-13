@@ -69,7 +69,6 @@ package body Adv_Draw is
 		end if;
 
 -- clip bounding box with canvas size
---.
 		if xmi < Pixel_X'First then
 			xmi := Pixel_X'First;
 		end if;
@@ -86,7 +85,8 @@ package body Adv_Draw is
 		if xma = xmi or else yma = ymi then
 			return;
 		end if;
-
+-- pre-compute denominators
+		-- if they are nul, so the triangle is degenarate
 		t1 := plop(B,C,A(1), A(2));
 		if t1 = 0.0 then
 			return;
@@ -100,6 +100,7 @@ package body Adv_Draw is
 			return;
 		end if;
 
+		-- loop on each pixel into the bounding box
 		for x in xmi..xma loop
 			for y in ymi..yma loop
 				xx := Float(x);
@@ -112,9 +113,9 @@ package body Adv_Draw is
 
 
 				if 0.0 <= l1 and l1 <= 1.0 and 0.0 <= l2 and l2 <= 1.0 and 0.0 <= l3 and l3 <= 1.0 then
-				--if True then
-					--DrawPixel(X, Y, (A(3)+B(3)+C(3))/3.0, Val);
-					DrawPixel(X, Y, Val);
+				--	DrawPixel(X, Y, (A(3)+B(3)+C(3))/3.0, Val);
+					DrawPixel(X, Y, l1*A(3)+l2*B(3)+l3*C(3), Val);
+					--DrawPixel(X, Y, Val);
 				end if;
 
 			end loop;
