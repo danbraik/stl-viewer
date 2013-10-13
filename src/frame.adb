@@ -38,11 +38,12 @@ package body Frame is
 				--end loop;
 
 				if Params.EnableLighting then				
-					Tmp := (Pts(1));
-					normalize(Tmp);
-					Tmp2 :=  Pts(1) - Pts(4);
-					normalize(Tmp2);
-					val := PixLum( 255.0-  (length (Tmp2   * Tmp )) * 255.0 );
+					--Tmp := (Pts(1));
+					--normalize(Tmp);
+					--Tmp2 :=  Pts(1) - Pts(4);
+					--normalize(Tmp2);
+					--val := PixLum( 255.0-  (length (Tmp2   * Tmp )) * 255.0 );
+					val :=PixLum(255.0-exp(-Pts(1)(3)*0.102)*255.0);
 				else
 					val := 255;
 				end if;
