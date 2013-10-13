@@ -16,6 +16,7 @@ with Dessin; use Dessin;
 with Frame; use Frame;
 with STL; use STL;
 with Scene;
+with Params;
 
 with Ada.Command_line; use Ada.Command_Line;
 
@@ -49,6 +50,17 @@ procedure Visualiseur is
 	use type C.int;
 
 begin
+	-- display info
+	Put_Line("3D STL Viewer"); New_Line;
+	Put_Line("Control keys :");
+	Put_Line("     Up, down, right, left, H, L : move camera");
+	Put_Line("     Page up, page down : Medium Zoom/Dezoom");
+	Put_line("     P, M : Little Zoom/Dezoom");
+	Put_Line("     E : Toggle lighting");
+	Put_Line("     R : Change lighting mode");
+	Put_Line("     N : Toggle displaying face normals");
+	Put_Line("     F : Toggle display mode (Wire or Fill)");
+	New_Line;	
 
 	-- on commence par charger le maillage
 	if Argument_Count /= 1 then
@@ -139,6 +151,18 @@ begin
 							Scene.Modification_Coordonnee_Camera(1, -5.0);
 						when SDL.Keysym.K_PAGEDOWN =>
 							Scene.Modification_Coordonnee_Camera(1, 5.0);
+						when SDL.Keysym.K_P =>
+							Scene.Modification_Coordonnee_Camera(1, -1.0);
+						when SDL.Keysym.K_M =>
+							Scene.Modification_Coordonnee_Camera(1, 1.0);
+						when SDL.Keysym.K_E =>
+							Params.EnableLighting := not Params.EnableLighting;
+						when SDL.Keysym.K_R =>
+							Params.LightingMode := (Params.LightingMode + 1) mod 3;
+						when SDL.Keysym.K_N =>
+							Params.DisplayNormals := not Params.DisplayNormals;
+						when SDL.Keysym.K_F =>
+							Params.FillTriangles := not Params.FillTriangles;
 						when others =>
 							null;
 					end case;

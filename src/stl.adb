@@ -13,6 +13,7 @@ with Ada.Text_IO; -- Text I/O library
 with Ada.Float_Text_IO;
 with Ada.Streams.Stream_IO;
 with Interfaces; use Interfaces;
+with Algebre; use Algebre;
 
 package body STL is
 
@@ -31,6 +32,15 @@ package body STL is
 		-- Number of element into the list
 		NbElt : Natural;
 	end record;
+
+
+	-- Complete face data : compute the normal
+	procedure FinalizeFace(face : in out Facette) is
+	begin
+		-- * is the cross product
+		face.N := (face.P2 - face.P1) * (face.P3 - face.P1);
+		normalize(face.N);
+	end;
 
 
 	-- Could raise exception if a word is larger than 128 bytes
@@ -117,6 +127,7 @@ package body STL is
 								Float'Value(Get_Next_Word(F)),
 								Float'Value(Get_Next_Word(F)));
 							Current := Main;
+							FinalizeFace(NouvelleFace.face);
 						end if;
 				end case;
 			end;
@@ -192,6 +203,8 @@ package body STL is
             end loop;
             -- read byte count
             Integer_16'Read(Input_Stream, I16);
+
+			FinalizeFace(M(Index));
 
             Index := Index + 1;
         end loop;

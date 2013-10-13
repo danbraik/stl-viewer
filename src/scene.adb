@@ -5,7 +5,7 @@ use Ada.Text_IO;
 
 package body Scene is
 
-	R : Float := 90.0; -- coordonnee Z initiale de la camera
+	R : Float := 20.0; -- coordonnee Z initiale de la camera
 	Rho : Float := 0.0; -- rotation autour de X
 	Theta : Float := 0.0; -- rotation autour de Y
 	Phi : Float := 0.0; -- rotation autour de Z
@@ -32,7 +32,7 @@ package body Scene is
 	end;
 
 
-	procedure Projection_Facette(Index_Facette : Positive ; P1, P2, P3 : out Vecteur) is
+	procedure Projection_Facette(Index_Facette : Positive ; P1, P2, P3, N : out Vecteur) is
         f : Facette;
         PosCam : Vecteur := Position_Camera;
 	begin
@@ -41,6 +41,7 @@ package body Scene is
         P1 := Projection(f.P1, PosCam, E, Ti);
         P2 := Projection(f.P2, PosCam, E, Ti);
         P3 := Projection(f.P3, PosCam, E, Ti);
+        N := Projection(f.P1 + f.N, PosCam, E, Ti);
 	end;
 
 
