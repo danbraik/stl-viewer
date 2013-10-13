@@ -46,16 +46,20 @@ package body Frame is
 				if Params.EnableLighting then				
 					case Params.LightingMode is
 						when 0 =>
+							Tmp := (Pts(1) +Pts(2) +Pts(3));
+							
+							val := PixLum(Integer(Cos(Tmp(3))*16.0+32.0) mod 224);
+						when 1 =>
+							-- inspired by OpenGL : 1 / (a+bx+cx²)
+							val := PixLum(255.0 / 
+								(Pts(1)(3)*Pts(1)(3)*0.02 + Pts(1)(3)*0.1 + 1.0	));
+						when 2 =>
 							Tmp := (Pts(1) );
 							normalize(Tmp);
 							Tmp2 :=  Pts(1) - Pts(4);
 							normalize(Tmp2);
 							val := PixLum(
 								exp(-( (length (Tmp2   * Tmp )*2.0) )) * 255.0 );
-						when 1 =>
-							val :=PixLum(exp(-Pts(1)(3)*0.102)*255.0);
-						when 2 =>
-							null;
 						when others => null;
 					end case;
 				else

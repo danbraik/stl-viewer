@@ -1,12 +1,9 @@
+-- Global variables for config display
 package Params is
-	
-	Debug : Boolean := True;
 
 	DisplayNormals : Boolean := False;
-	EnableLighting : Boolean := True;
+	EnableLighting : Boolean := False;
 	LightingMode   : Natural := 0;
-	FillTriangles  : Boolean := True;
-
-	
+	FillTriangles  : Boolean := False;
 
 end;
