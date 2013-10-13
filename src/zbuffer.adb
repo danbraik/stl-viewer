@@ -19,10 +19,12 @@ package body ZBuffer is
 	end;
 
 	procedure DrawPixel(X, Y : Integer ; Z : Float ; V : PixLum) is
+		D : Float := Z;
 	begin
 		if X >= Xmin and then X <= Xmax and then Y >= Ymin and then Y <= Ymax then
-			if buffer(X,Y) > Z then
-				buffer(X, Y) := Z;
+			D := Float'Rounding(D);
+			if buffer(X,Y) > D then
+				buffer(X, Y) := D;
 				Dessin.Fixe_Pixel(X, Y, V);
 			end if;
 		end if;
