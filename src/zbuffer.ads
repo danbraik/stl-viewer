@@ -11,8 +11,8 @@ package Zbuffer is
 	procedure DrawPixel(X, Y : Integer ; V : PixLum);
 	
 	-- Draw a pixel on screen (does not occlude nearest pixel)
-	-- Can be called with an invalid position
+	-- MUST NOT be called with an invalid position
 	-- Z : depth of the pixel to draw
-	procedure DrawPixel(X, Y : Integer ; Z : Float ; V : PixLum);
+	procedure DrawPixel(X : Pixel_X; Y : Pixel_Y ; Z : Float ; V : PixLum);
 
 end;
