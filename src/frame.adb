@@ -20,7 +20,7 @@ package body Frame is
 		-- projected points (fourth is the normal)
         Pts : array (1..4) of Vecteur(1..3);
 		val : PixLum;
-		CamPos : Vecteur := Scene.Position_Camera;
+		CamPos : constant Vecteur := Scene.Position_Camera;
 		Tmp, Tmp2 : Vecteur(1..3);
         FaceDisplayedCount : Integer := 0;
         XMIN : constant Float := Float(Pixel_X'First);
@@ -74,7 +74,6 @@ package body Frame is
 					case Params.LightingMode is
 						when 0 =>
 							Tmp := (Pts(1) +Pts(2) +Pts(3));
-							
 							val := PixLum(Integer(Cos(Tmp(3))*16.0+32.0) mod 224);
 						when 1 =>
 							-- inspired by OpenGL : 1 / (a+bx+cx²)
@@ -96,7 +95,11 @@ package body Frame is
 				-- Draw the face normal (from the first vertex)
 				if Params.DisplayNormals then
             		Ligne.Tracer_Segment_LumVar_Z(Pts(1)(1), Pts(1)(2), Pts(1)(3), 
-                						          Pts(4)(1), Pts(4)(2), Pts(4)(3), 228);
+                						          Pts(4)(1), Pts(4)(2), Pts(4)(3), 64);
+            		--Ligne.Tracer_Segment(Pts(1)(1), Pts(1)(2), 
+                	--					          Pts(4)(1), Pts(4)(2));
+            		--Ligne.Tracer_Segment_LumVar(Pts(1)(1), Pts(1)(2), 
+                	--					          Pts(4)(1), Pts(4)(2), 128);
 				end if;
 
 				-- Draw the triangle (Fill or Wire mode)
@@ -106,7 +109,7 @@ package body Frame is
 					Ligne.Tracer_Segment_LumVar_Z(Pts(1)(1), Pts(1)(2), Pts(1)(3),
 											Pts(2)(1), Pts(2)(2), Pts(2)(3), val);
 	            
-					Ligne.Tracer_Segment_LumVar_Z(Pts(2)(1), Pts(2)(2),  Pts(2)(3),
+					Ligne.Tracer_Segment_LumVar_Z(Pts(2)(1), Pts(2)(2), Pts(2)(3),
 											Pts(3)(1), Pts(3)(2), Pts(3)(3), val);
 
 	            	Ligne.Tracer_Segment_LumVar_Z(Pts(3)(1), Pts(3)(2), Pts(3)(3),
@@ -118,8 +121,8 @@ package body Frame is
 
         end loop;
 
-        Put(FaceDisplayedCount);
-        New_Line;
+--        Put(FaceDisplayedCount);
+--        New_Line;
 	end;
 
 end Frame;
