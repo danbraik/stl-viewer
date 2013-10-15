@@ -41,6 +41,7 @@ package body Frame is
            	if Pts(1)(3) > 0.0 and then 
 				Pts(2)(3) > 0.0 and then 
 				Pts(3)(3) > 0.0 and then (
+                -- test if at least one vertex is inside screen
                 (
                     Pts(1)(1) >= XMIN and then Pts(1)(1) <= XMAX
                     and then
@@ -58,8 +59,7 @@ package body Frame is
                     and then
                     Pts(3)(2) >= YMIN and then Pts(3)(2) <= YMAX
                 )
-
-                    )
+                )
             then 
 
                 FaceDisplayedCount := FaceDisplayedCount + 1;
