@@ -26,19 +26,15 @@ package body Ligne is
 		z2 : Float := Zb;
 		len : Float := sqrt( (xa-xb)**2+(ya-yb)**2+(za-zb)**2);
 	begin
-
-	-- OR use LEN
 		-- prevent to draw very big lines
-		if abs(Xb - Xa) > 800.0 or else abs(Yb - Ya) > 800.0 then
+		if len > 1000.0 then
 			return;
 		end if;
-
+	
 		x1 := Integer(Float'Rounding(xa));
 		y1 := Integer(Float'Rounding(ya));
 		x2 := Integer(Float'Rounding(xb));
 		y2 := Integer(Float'Rounding(yb));
-
-		
 
 		dx := x2 - x1;
 		if dx /= 0 then
@@ -276,7 +272,6 @@ package body Ligne is
 		y1 := Integer(Float'Rounding(ya));
 		x2 := Integer(Float'Rounding(xb));
 		y2 := Integer(Float'Rounding(yb));
-
 
 		dx := x2 - x1;
 		if dx /= 0 then
