@@ -22,6 +22,11 @@ package body Frame is
 		val : PixLum;
 		CamPos : Vecteur := Scene.Position_Camera;
 		Tmp, Tmp2 : Vecteur(1..3);
+        FaceDisplayedCount : Integer := 0;
+        XMIN : constant Float := Float(Pixel_X'First);
+        XMAX : constant Float := Float(Pixel_X'Last);
+        YMIN : constant Float := Float(Pixel_Y'First);
+        YMAX : constant Float := Float(Pixel_Y'Last);
 		
 	begin
 
@@ -32,10 +37,32 @@ package body Frame is
         for faceIndex in 1..Scene.Nombre_De_Facettes loop
             Scene.Projection_Facette(faceIndex, Pts(1), Pts(2), Pts(3), Pts(4));
 
-			-- Test if the face is enterly in front of camera
+			-- Test if the face is enterly in front of camera and inside screen
            	if Pts(1)(3) > 0.0 and then 
 				Pts(2)(3) > 0.0 and then 
-				Pts(3)(3) > 0.0 then 
+				Pts(3)(3) > 0.0 and then (
+                (
+                    Pts(1)(1) >= XMIN and then Pts(1)(1) <= XMAX
+                    and then
+                    Pts(1)(2) >= YMIN and then Pts(1)(2) <= YMAX
+                )
+                    or else
+                (
+                    Pts(2)(1) >= XMIN and then Pts(2)(1) <= XMAX
+                    and then
+                    Pts(2)(2) >= YMIN and then Pts(2)(2) <= YMAX
+                )
+                    or else
+                (
+                    Pts(3)(1) >= XMIN and then Pts(3)(1) <= XMAX
+                    and then
+                    Pts(3)(2) >= YMIN and then Pts(3)(2) <= YMAX
+                )
+
+                    )
+            then 
+
+                FaceDisplayedCount := FaceDisplayedCount + 1;
 
 				-- debug
 				--for i in 1..3 loop
@@ -66,6 +93,11 @@ package body Frame is
 					val := 255;
 				end if;
 
+				-- Draw the face normal (from the first vertex)
+				if Params.DisplayNormals then
+            		Ligne.Tracer_Segment_LumVar_Z(Pts(1)(1), Pts(1)(2), Pts(1)(3), 
+                						          Pts(4)(1), Pts(4)(2), Pts(4)(3), 228);
+				end if;
 
 				-- Draw the triangle (Fill or Wire mode)
 				if Params.FillTriangles then
@@ -81,15 +113,13 @@ package body Frame is
 											Pts(1)(1), Pts(1)(2), Pts(1)(3), val);
 				end if;
 
-				-- Draw the face normal (from the first vertex)
-				if Params.DisplayNormals then
-            		Ligne.Tracer_Segment_LumVar_Z(Pts(1)(1), Pts(1)(2), Pts(1)(3), 
-                						          Pts(4)(1), Pts(4)(2), Pts(4)(3), 228);
-				end if;
 
            	end if;
 
         end loop;
+
+        Put(FaceDisplayedCount);
+        New_Line;
 	end;
 
 end Frame;
