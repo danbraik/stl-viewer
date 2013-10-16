@@ -13,9 +13,7 @@ package body Ligne is
     Ymax : constant Float := Float(Dessin.Pixel_Y'Last);
 
 
-
-    procedure internDrawLineLumZ(Xa : Pixel_X ;  Ya : Pixel_Y ; Za : Float ; Xb : Pixel_X ;  Yb : Pixel_Y ; Zb : Float ; Val : PixLum);
-
+    procedure internDrawLineLumZ(Xa, Ya : Integer ; Za : Float ; Xb, Yb : Integer ; Zb : Float ; Val : PixLum);
 
 
 
@@ -59,14 +57,12 @@ package body Ligne is
 
 		--		            Put(x1);Put(y1);Put(x2);Put(y2);New_Line;
 
-
+		-- http://myweb.lmu.edu/dondi/share/cg/clipping.pdf
 		declare
-
 			u1 : Float := 0.0;
 			dx : Float := x2 - x1 ;
 			u2 : Float := 1.0 ;
 			dy : Float := y2 - y1;
-
 
 			function Reject(C, q : Float) return Boolean is
 				u : Float := q / C;
@@ -92,11 +88,8 @@ package body Ligne is
 			end Reject;
 
 		begin
-
-
-			-- left edge check
-
-
+			-- test intersect with edges :
+			-- left, right, top, bottom
 			if Reject(-dx, x1 - XMIN) then
 				return;
 			end if;
@@ -110,6 +103,7 @@ package body Ligne is
 				return;
 			end if;
 
+			-- update points position
 			if u2 < 1.0 then
 				x2 := x1 + u2 * dx;
 				y2 := y1 + u2 * dy;
@@ -122,39 +116,6 @@ package body Ligne is
 
 		--		            Put(x1);Put(y1);Put(x2);Put(y2);New_Line;
 
-
-
-		declare
-			a : Pixel_X;
-			b : Pixel_Y;
-		begin
-
-			begin
-				a:=Pixel_X(Integer(x1));
-			exception
-				when others => Put("!x1");
-			end;
-			begin
-				a:=Pixel_X(Integer(x2));
-			exception
-				when others => Put("!x2");
-			end;
-			begin
-				b:=Pixel_Y(Integer(y1));
-			exception
-				when others => Put("!y1");
-				Put(Integer(y1));
-			end;
-			begin
-				b:=Pixel_Y(Integer(y2));
-			exception
-				when others => Put("!y2");
-			end;
-
-		end;
-		--		Put(Za);Put(Zb);Put(Integer(Val)) ;New_Line;
-
-        --begin
         internDrawLineLumZ(
 			Integer(x1),
 			Integer(y1),
@@ -163,14 +124,10 @@ package body Ligne is
 			Integer(y2),
 			Zb,
 			Val);
-		---			exception
-		--			when others =>
-		--				Put_Line("wazzzzzzzzzzzzzzza");
-		--			end;
 	end;
 
 
-    procedure internDrawLineLumZ(Xa : Pixel_X ;  Ya : Pixel_Y ; Za : Float ; Xb : Pixel_X ;  Yb : Pixel_Y ; Zb : Float ; Val : PixLum) is
+    procedure internDrawLineLumZ(Xa, Ya : Integer ; Za : Float ; Xb, Yb : Integer ; Zb : Float ; Val : PixLum) is
 		dx, dy : Integer;
 		dz : Float;
 		e : Integer;
