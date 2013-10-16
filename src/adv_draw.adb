@@ -1,7 +1,13 @@
 with ZBuffer; use ZBuffer;
 with Algebre; use Algebre;
+with Params; use Params;
 
 package body Adv_Draw is
+
+	XMIN : constant Integer := (Dessin.Pixel_X'First);
+    XMAX : constant Integer := (Dessin.Pixel_X'Last);
+	YMIN : constant Integer := (Dessin.Pixel_Y'First);
+	YMAX : constant Integer := (Dessin.Pixel_Y'Last);
 
 
 	-- Compute an intermediate result
@@ -16,6 +22,7 @@ package body Adv_Draw is
 		xmi, xma, ymi, yma : Integer;
 		l1, l2, l3, xx, yy : Float;
 		t1, t2, t3 : Float;
+		-- compute and store viewport screen limits
 	begin
 		-- compute bounding box
 		if A(1) > B(1) then         -- B < A
@@ -70,19 +77,20 @@ package body Adv_Draw is
 			end if;
 		end if;
 
-		-- clip bounding box with canvas size
-		if xmi < Pixel_X'First then
-			xmi := Pixel_X'First;
-		end if;
-		if xma > Pixel_X'Last then
-			xma := Pixel_X'Last;
-		end if;
-		if ymi < Pixel_Y'First then
-			ymi := Pixel_Y'First;
-		end if;
-		if yma > Pixel_Y'Last then
-			yma := Pixel_Y'Last;
-		end if;
+
+			-- clip bounding box with canvas size
+			if xmi < XMAX then
+				xmi := XMIN;
+			end if;
+			if xma > XMAX then
+				xma := XMAX;
+			end if;
+			if ymi < YMIN then
+				ymi := YMIN;
+			end if;
+			if yma > YMAX then
+				yma := YMAX;
+			end if;
 
 		-- if the bounding box is actually out of screen
 		-- stop the algo

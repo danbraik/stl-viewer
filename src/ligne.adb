@@ -1,3 +1,4 @@
+with Params; use Params;
 with ZBuffer; use ZBuffer;
 with Ada.Numerics.Elementary_Functions; use Ada.Numerics.Elementary_Functions;
 
@@ -13,7 +14,10 @@ package body Ligne is
     Ymax : constant Float := Float(Dessin.Pixel_Y'Last);
 
 
-    procedure internDrawLineLumZ(Xa, Ya : Integer ; Za : Float ; Xb, Yb : Integer ; Zb : Float ; Val : PixLum);
+
+    procedure internDrawLineLumZ(Xa : Pixel_X ;  Ya : Pixel_Y ; Za : Float ; Xb : Pixel_X ;  Yb : Pixel_Y ; Zb : Float ; Val : PixLum);
+
+
 
 
 	--code entierement repris de wikipedia
@@ -32,169 +36,142 @@ package body Ligne is
 
 
     procedure Tracer_Segment_LumVar_Z(Xa, Ya, Za, Xb, Yb, Zb : Float; Val : PixLum) is
-		x1 : Float := Xa;
-		y1 : Float := Ya;
-		x2 : Float := Xb;
-		y2 : Float := Yb;
+		x1 : Float := Float'Rounding(Xa);
+		y1 : Float := Float'Rounding(Ya);
+		x2 : Float := Float'Rounding(Xb);
+		y2 : Float := Float'Rounding(Yb);
 		e,deltx, delty, coefx, coefy : Float;		
+
 	begin
 
-		  
+		-- Clipping lines : Liang-Barsky Algorithm 
 
 
-        if x1 = x2 then
-            if y1 > y2 then
-                e := y1;
-                y1 := y2;
-                y2 := e;
-            end if;
-
-            if y1 < YMIN then
-                if y2 < YMIN then
-                    return;
-                else
-                    y1 := YMIN;
-                end if;
-            elsif y1 > YMAX then
-                return;
-            end if;
-            if y2 > YMAX then
-                if y1 > YMAX then
-                    return;
-                else
-                    y2 := YMAX;
-                end if;
-                -- the case where x2 < XMIN
-                -- can't be reach
-            end if;
-
-        elsif y1 = y2 then
-            if x1 > x2 then
-                e := x1;
-                x1 := x2;
-                x2 := e;
-            end if;
-
-            if x1 < XMIN then
-                if x2 < XMIN then
-                    return;
-                else
-                    x1 := XMIN;
-                end if;
-            elsif x1 > XMAX then
-                return;
-            end if;
-            if x2 > XMAX then
-                if x1 > XMAX then
-                    return;
-                else
-                    x2 := XMAX;
-                end if;
-                -- the case where x2 < XMIN
-                -- can't be reach
-            end if;
-
-        else
-
-
-			declare
-				deltx, delty : Float;
-				coefX, coefY : Float;
-			begin
-
-
-            if x1 > x2 then
-                e := x1;
-                x1 := x2;
-                x2 := e;
-                e := y1;
-                y1 := y2;
-                y2 := e;
-            end if;
-
-			deltx := Float(x2-x1);
-			delty := Float(y2-y1);
-			coefX := delty / deltx;
-			coefY := deltx/delty;
-
-
-
-            if x1 < XMIN then
-                if x2 < XMIN then
-                    return;
-                else
-                    y1 := y1 + coefX * (x1 - XMIN);
-                    x1 := XMIN;
-                end if;
-            end if;
-            if x2 > XMAX then
-                if x1 > XMAX then
-                    return;
-                else
-                    y2 := y2 - coefX * (x2 - XMAX);
-                    x2 := XMAX;
-                end if;
-            end if;
-
-            if y1 < y2 then
-                if y1 < YMIN then
-                    if y2 < YMIN then
-                        return;
-                    else
-                        x1 := x1 + coefY*(y1-YMIN);
-                        y1 := YMIN;
-                    end if;
-                end if;
-                if y2 > YMAX then
-                    if y1 > YMAX then
-                        return;
-                    else
-                        x2 := x2-coefY*(y2-YMAX);
-                        y2 := YMAX;
-                    end if;
-                end if;
-            else
-                if y2 < YMIN then
-                    if y1 < YMIN then
-                        return;
-                    else
-                        x2 := x2 - coefY*(y2-YMIN);
-                        y2 := YMIN;
-                    end if;
-                end if;
-                if y1 > YMAX then
-                    if y2 > YMAX then
-                        return;
-                    else
-                        x1 := x1 + coefY*(y1-YMAX);
-                        y1 := YMAX;
-                    end if;
-                end if;
-            end if;
-
-		end;
+		-- sort points by X
+		-- P1 will be always at left
+        if x1 > x2 then
+            e := x1;
+            x1 := x2;
+            x2 := e;
+            e := y1;
+            y1 := y2;
+            y2 := e;
         end if;
 
---            Put(x1);Put(y1);Put(x2);Put(y2);New_Line;
---		Put(Za);Put(Zb);Put(Integer(Val)) ;New_Line;
-            
-            --begin
-            internDrawLineLumZ(
-				Integer(Float(x1)),
-				Integer(Float(y1)),
-				Za,
-				Integer(Float(x2)),
-				Integer(Float(y2)),
-				Zb,
-				Val);
----			exception
---			when others =>
---				Put_Line("wazzzzzzzzzzzzzzza");
---			end;
+		--		            Put(x1);Put(y1);Put(x2);Put(y2);New_Line;
+
+
+		declare
+
+			u1 : Float := 0.0;
+			dx : Float := x2 - x1 ;
+			u2 : Float := 1.0 ;
+			dy : Float := y2 - y1;
+
+
+			function Reject(C, q : Float) return Boolean is
+				u : Float := q / C;
+			begin
+				if C < 0.0 then
+					if u > u2 then
+						return true;
+					elsif u > u1 then
+						u1 := u;
+					end if;
+				elsif C > 0.0 then
+					if u < u1 then
+						return true;
+					elsif u < u2 then
+						u2 := u;
+					end if;
+				else
+					if q < 0.0 then 
+						return true;
+					end if;
+				end if;
+				return false;
+			end Reject;
+
+		begin
+
+
+			-- left edge check
+
+
+			if Reject(-dx, x1 - XMIN - Params.MargeX) then
+				return;
+			end if;
+			if Reject(dx, XMAX - Params.MargeX - x1) then
+				return;
+			end if;
+			if Reject(-dy, y1 - YMIN - Params.MargeY) then
+				return;
+			end if;
+			if Reject(dy, YMAX - Params.MargeY - y1) then
+				return;
+			end if;
+
+			if u2 < 1.0 then
+				x2 := x1 + u2 * dx;
+				y2 := y1 + u2 * dy;
+			end if;
+			if u1 > 0.0 then
+				x1 := x1 + u1 * dx; 
+				y1 := y1 + u1 * dy;
+			end if;
+		end;
+
+		--		            Put(x1);Put(y1);Put(x2);Put(y2);New_Line;
+
+
+
+		declare
+			a : Pixel_X;
+			b : Pixel_Y;
+		begin
+
+			begin
+				a:=Pixel_X(Integer(x1));
+			exception
+				when others => Put("!x1");
+			end;
+			begin
+				a:=Pixel_X(Integer(x2));
+			exception
+				when others => Put("!x2");
+			end;
+			begin
+				b:=Pixel_Y(Integer(y1));
+			exception
+				when others => Put("!y1");
+				Put(Integer(y1));
+			end;
+			begin
+				b:=Pixel_Y(Integer(y2));
+			exception
+				when others => Put("!y2");
+			end;
+
+		end;
+		--		Put(Za);Put(Zb);Put(Integer(Val)) ;New_Line;
+
+        --begin
+        internDrawLineLumZ(
+			Integer(x1),
+			Integer(y1),
+			Za,
+			Integer(x2),
+			Integer(y2),
+			Zb,
+			Val);
+		---			exception
+		--			when others =>
+		--				Put_Line("wazzzzzzzzzzzzzzza");
+		--			end;
 	end;
 
 
-    procedure internDrawLineLumZ(Xa, Ya : Integer ; Za : Float ; Xb, Yb : Integer ; Zb : Float ; Val : PixLum) is
+    procedure internDrawLineLumZ(Xa : Pixel_X ;  Ya : Pixel_Y ; Za : Float ; Xb : Pixel_X ;  Yb : Pixel_Y ; Zb : Float ; Val : PixLum) is
 		dx, dy : Integer;
 		dz : Float;
 		e : Integer;
@@ -293,7 +270,7 @@ package body Ligne is
 					-- vecteur horizontal vers la droite
 					loop
 						DrawPixel(x1, y1, z1, val) ;
-								z1 := z1 + dz;
+						z1 := z1 + dz;
 						x1 := x1 + 1;
 						exit when x1 = x2 ;
 					end loop;
@@ -378,7 +355,7 @@ package body Ligne is
 					-- vecteur horizontal vers la gauche
 					loop
 						DrawPixel(x1, y1, z1, val) ;
-								z1 := z1 + dz;
+						z1 := z1 + dz;
 						x1 := x1 - 1;
 						exit when x1 = x2 ;
 					end loop;
@@ -393,7 +370,7 @@ package body Ligne is
 					-- vecteur vertical croissant
 					loop
 						DrawPixel(x1, y1, z1, val) ;
-								z1 := z1 + dz;
+						z1 := z1 + dz;
 						y1 := y1 + 1;
 						exit when y1 = y2 ;
 					end loop;
@@ -403,7 +380,7 @@ package body Ligne is
 					-- vecteur vertical décroissant
 					loop
 						DrawPixel(x1, y1, z1, val) ;
-								z1 := z1 + dz;
+						z1 := z1 + dz;
 						y1 := y1 - 1;
 						exit when y1 = y2 ;
 					end loop;
