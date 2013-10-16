@@ -60,7 +60,6 @@ begin
 	Put_Line("     R : Change lighting mode");
 	Put_Line("     N : Toggle displaying face normals");
 	Put_Line("     F : Toggle display mode (Wire or Fill)");
-	Put_Line("     V : Toggle viewport size (Normal or Cinema)");
 	New_Line;	
 
 	-- on commence par charger le maillage
@@ -164,14 +163,6 @@ begin
 							Params.DisplayNormals := not Params.DisplayNormals;
 						when SDL.Keysym.K_F =>
 							Params.FillTriangles := not Params.FillTriangles;
-						when SDL.Keysym.K_V =>
-							if Params.MargeX = 0.0 and then Params.MargeY = 0.0 then
-								Params.MargeX := 20.0;
-								Params.MargeY := 100.0;
-							else
-								Params.MargeX := 0.0;
-								Params.MargeY := 0.0;
-							end if;
 						when others =>
 							null;
 					end case;

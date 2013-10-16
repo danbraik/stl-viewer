@@ -1,6 +1,5 @@
 with ZBuffer; use ZBuffer;
 with Algebre; use Algebre;
-with Params; use Params;
 
 package body Adv_Draw is
 
@@ -8,7 +7,6 @@ package body Adv_Draw is
     XMAX : constant Integer := (Dessin.Pixel_X'Last);
 	YMIN : constant Integer := (Dessin.Pixel_Y'First);
 	YMAX : constant Integer := (Dessin.Pixel_Y'Last);
-
 
 	-- Compute an intermediate result
 	function Plop(A, B : Vecteur ; x, y : Float) return Float is
@@ -77,20 +75,19 @@ package body Adv_Draw is
 			end if;
 		end if;
 
-
-			-- clip bounding box with canvas size
-			if xmi < XMAX then
-				xmi := XMIN;
-			end if;
-			if xma > XMAX then
-				xma := XMAX;
-			end if;
-			if ymi < YMIN then
-				ymi := YMIN;
-			end if;
-			if yma > YMAX then
-				yma := YMAX;
-			end if;
+		-- clip bounding box with canvas size
+		if xmi < XMAX then
+			xmi := XMIN;
+		end if;
+		if xma > XMAX then
+			xma := XMAX;
+		end if;
+		if ymi < YMIN then
+			ymi := YMIN;
+		end if;
+		if yma > YMAX then
+			yma := YMAX;
+		end if;
 
 		-- if the bounding box is actually out of screen
 		-- stop the algo

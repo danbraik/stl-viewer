@@ -5,8 +5,5 @@ package Params is
 	EnableLighting : Boolean := False;
 	LightingMode   : Natural := 0;
 	FillTriangles  : Boolean := False;
-	-- CinemaViewport
-		MargeX : Float := 0.0;
-		MargeY : Float := 0.0;
 
 end;

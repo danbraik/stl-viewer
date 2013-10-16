@@ -1,4 +1,3 @@
-with Params; use Params;
 with ZBuffer; use ZBuffer;
 with Ada.Numerics.Elementary_Functions; use Ada.Numerics.Elementary_Functions;
 
@@ -98,16 +97,16 @@ package body Ligne is
 			-- left edge check
 
 
-			if Reject(-dx, x1 - XMIN - Params.MargeX) then
+			if Reject(-dx, x1 - XMIN) then
 				return;
 			end if;
-			if Reject(dx, XMAX - Params.MargeX - x1) then
+			if Reject(dx, XMAX - x1) then
 				return;
 			end if;
-			if Reject(-dy, y1 - YMIN - Params.MargeY) then
+			if Reject(-dy, y1 - YMIN) then
 				return;
 			end if;
-			if Reject(dy, YMAX - Params.MargeY - y1) then
+			if Reject(dy, YMAX - y1) then
 				return;
 			end if;
 
