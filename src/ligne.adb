@@ -7,10 +7,13 @@ with Ada.Float_Text_IO; use Ada.Float_Text_IO;
 
 package body Ligne is
 
-    Xmin : constant Integer := Dessin.Pixel_X'First;
-    Xmax : constant Integer := Dessin.Pixel_X'Last;
-    Ymin : constant Integer := Dessin.Pixel_Y'First;
-    Ymax : constant Integer := Dessin.Pixel_Y'Last;
+    Xmin : constant Float := Float(Dessin.Pixel_X'First);
+    Xmax : constant Float := Float(Dessin.Pixel_X'Last);
+    Ymin : constant Float := Float(Dessin.Pixel_Y'First);
+    Ymax : constant Float := Float(Dessin.Pixel_Y'Last);
+
+
+    procedure internDrawLineLumZ(Xa, Ya : Integer ; Za : Float ; Xb, Yb : Integer ; Zb : Float ; Val : PixLum);
 
 
 	--code entierement repris de wikipedia
@@ -29,31 +32,14 @@ package body Ligne is
 
 
     procedure Tracer_Segment_LumVar_Z(Xa, Ya, Za, Xb, Yb, Zb : Float; Val : PixLum) is
-		dx, dy : Integer;
-		dz : Float;
-		e : Integer;
-		x1 : Integer; 
-		y1 : Integer;
-		x2 : Integer;
-		y2 : Integer;
-		z1 : Float := Za;
-		z2 : Float := Zb;
-		len : Float; 
-    begin
+		x1 : Float := Xa;
+		y1 : Float := Ya;
+		x2 : Float := Xb;
+		y2 : Float := Yb;
+		e,deltx, delty, coefx, coefy : Float;		
+	begin
 
-
-
-        
--- maybe constraint erro?	
-        begin
-		x1 := Integer(Float'Rounding(xa));
-		y1 := Integer(Float'Rounding(ya));
-		x2 := Integer(Float'Rounding(xb));
-		y2 := Integer(Float'Rounding(yb));
-    exception
-        when others =>
-            return;
-    end;
+		  
 
 
         if x1 = x2 then
@@ -111,6 +97,10 @@ package body Ligne is
         else
 
 
+			declare
+				deltx, delty : Float;
+				coefX, coefY : Float;
+			begin
 
 
             if x1 > x2 then
@@ -122,21 +112,27 @@ package body Ligne is
                 y2 := e;
             end if;
 
+			deltx := Float(x2-x1);
+			delty := Float(y2-y1);
+			coefX := delty / deltx;
+			coefY := deltx/delty;
+
+
 
             if x1 < XMIN then
                 if x2 < XMIN then
                     return;
                 else
+                    y1 := y1 + coefX * (x1 - XMIN);
                     x1 := XMIN;
-                    y1 := 300; --**
                 end if;
             end if;
             if x2 > XMAX then
                 if x1 > XMAX then
                     return;
                 else
+                    y2 := y2 - coefX * (x2 - XMAX);
                     x2 := XMAX;
-                    y2 := 300; --**
                 end if;
             end if;
 
@@ -145,16 +141,16 @@ package body Ligne is
                     if y2 < YMIN then
                         return;
                     else
+                        x1 := x1 + coefY*(y1-YMIN);
                         y1 := YMIN;
-                        x1 := 400; --**
                     end if;
                 end if;
                 if y2 > YMAX then
                     if y1 > YMAX then
                         return;
                     else
+                        x2 := x2-coefY*(y2-YMAX);
                         y2 := YMAX;
-                        x2 := 400; --**
                     end if;
                 end if;
             else
@@ -162,29 +158,59 @@ package body Ligne is
                     if y1 < YMIN then
                         return;
                     else
+                        x2 := x2 - coefY*(y2-YMIN);
                         y2 := YMIN;
-                        x2 := 400; --**
                     end if;
                 end if;
                 if y1 > YMAX then
                     if y2 > YMAX then
                         return;
                     else
+                        x1 := x1 + coefY*(y1-YMAX);
                         y1 := YMAX;
-                        x1 := 400; --**
                     end if;
                 end if;
             end if;
 
+		end;
         end if;
 
-            Put(x1);Put(y1);Put(x2);Put(y2);New_Line;
+--            Put(x1);Put(y1);Put(x2);Put(y2);New_Line;
+--		Put(Za);Put(Zb);Put(Integer(Val)) ;New_Line;
+            
+            --begin
+            internDrawLineLumZ(
+				Integer(Float(x1)),
+				Integer(Float(y1)),
+				Za,
+				Integer(Float(x2)),
+				Integer(Float(y2)),
+				Zb,
+				Val);
+---			exception
+--			when others =>
+--				Put_Line("wazzzzzzzzzzzzzzza");
+--			end;
+	end;
 
+
+    procedure internDrawLineLumZ(Xa, Ya : Integer ; Za : Float ; Xb, Yb : Integer ; Zb : Float ; Val : PixLum) is
+		dx, dy : Integer;
+		dz : Float;
+		e : Integer;
+		x1 : Integer := xa; 
+		y1 : Integer := ya;
+		x2 : Integer := xb;
+		y2 : Integer := yb;
+		z1 : Float := Za;
+		z2 : Float := Zb;
+		len : Float; 
+    begin
 
         -- compute line length on screen
         -- in order to have the delta depth
         -- between each pixel
-		len := sqrt((xa-xb)**2+(ya-yb)**2);
+		len := sqrt(Float((xa-xb)**2+(ya-yb)**2));
 
 		dx := x2 - x1;
 		if dx /= 0 then
@@ -195,7 +221,6 @@ package body Ligne is
 				if dy /= 0 then
 					if dy > 0 then
 						-- vecteur oblique dans le 1er quadran
-
 						if dx >= dy then
 							-- vecteur diagonal ou oblique proche de l’horizontale, dans le 1er octant
 							e := dx;
