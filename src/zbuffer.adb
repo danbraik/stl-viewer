@@ -20,7 +20,7 @@ package body ZBuffer is
 	-- Draw a pixel on screen (does not occlude nearest pixel)
     -- MUST NOT be called with an invalid position
     -- Z : depth of the pixel to draw
-    procedure DrawPixel(X : Pixel_X; Y : Pixel_Y ; Z : Float ; V : PixLum) is
+    procedure DrawPixel(X, Y : Integer ; Z : Float ; V : PixLum) is
 	begin
 		-- Test if the current pixel is nearer than the older pixel
 		if buffer(X, Y) > Z then
