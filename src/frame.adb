@@ -22,7 +22,7 @@ package body Frame is
 		val : PixLum;
 		CamPos : constant Vecteur := Scene.Position_Camera;
 		Tmp, Tmp2 : Vecteur(1..3);
-        FaceDisplayedCount : Integer := 0;
+
         XMIN : constant Float := Float(Pixel_X'First);
         XMAX : constant Float := Float(Pixel_X'Last);
         YMIN : constant Float := Float(Pixel_Y'First);
@@ -61,14 +61,6 @@ package body Frame is
                 )
                 )
             then 
-
-                FaceDisplayedCount := FaceDisplayedCount + 1;
-
-				-- debug
-				--for i in 1..3 loop
-				--   Put(Pts(i)(1));Put(Pts(i)(2));Put(Pts(i)(3));New_Line;
-				--end loop;
-
 				-- Compute the face luminance
 				if Params.EnableLighting then				
 					case Params.LightingMode is
@@ -96,10 +88,6 @@ package body Frame is
 				if Params.DisplayNormals then
             		Ligne.Tracer_Segment_LumVar_Z(Pts(1)(1), Pts(1)(2), Pts(1)(3), 
                 						          Pts(4)(1), Pts(4)(2), Pts(4)(3), 64);
-            		--Ligne.Tracer_Segment(Pts(1)(1), Pts(1)(2), 
-                	--					          Pts(4)(1), Pts(4)(2));
-            		--Ligne.Tracer_Segment_LumVar(Pts(1)(1), Pts(1)(2), 
-                	--					          Pts(4)(1), Pts(4)(2), 128);
 				end if;
 
 				-- Draw the triangle (Fill or Wire mode)
@@ -115,14 +103,10 @@ package body Frame is
 	            	Ligne.Tracer_Segment_LumVar_Z(Pts(3)(1), Pts(3)(2), Pts(3)(3),
 											Pts(1)(1), Pts(1)(2), Pts(1)(3), val);
 				end if;
-
-
            	end if;
 
         end loop;
 
---        Put(FaceDisplayedCount);
---        New_Line;
 	end;
 
 end Frame;
