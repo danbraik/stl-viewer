@@ -13,18 +13,25 @@ package body Ligne is
     Ymax : constant Float := Float(Dessin.Pixel_Y'Last);
 
 
+	-- private procedure
+	-- Draw a 2d segment on screen
+	-- The line MUST BE INTO the screen
+	-- with valid positions
+	--code entierement repris de wikipedia
+	--https://fr.wikipedia.org/wiki/Algorithme_de_trac%C3%A9_de_segment_de_Bresenham#Algorithme_g.C3.A9n.C3.A9ral_optimis.C3.A9
     procedure internDrawLineLumZ(Xa, Ya : Integer ; Za : Float ; Xb, Yb : Integer ; Zb : Float ; Val : PixLum);
 
 
-
-	--code entierement repris de wikipedia
-	--https://fr.wikipedia.org/wiki/Algorithme_de_trac%C3%A9_de_segment_de_Bresenham#Algorithme_g.C3.A9n.C3.A9ral_optimis.C3.A9
+	-- Draw a white 2D line on screen
+	-- The line will always be drawn (No depth)
 	procedure Tracer_Segment(xa, ya, xb, yb : Float) is
 	begin
         Tracer_Segment_LumVar_Z(xa, ya, 0.0, xb, yb, 0.0, 255);
     end;	
 
 
+	-- Draw a colored 2D line on screen
+	-- The line will always be drawn (No depth)
     procedure Tracer_Segment_LumVar(Xa, Ya, Xb, Yb : Float; Val : PixLum) is
     begin
         Tracer_Segment_LumVar_Z(xa, ya, 0.0, xb, yb, 0.0, Val);
@@ -32,17 +39,17 @@ package body Ligne is
 
 
 
+	-- Draw a colored 2D line on screen with depth
     procedure Tracer_Segment_LumVar_Z(Xa, Ya, Za, Xb, Yb, Zb : Float; Val : PixLum) is
 		x1 : Float := Float'Rounding(Xa);
 		y1 : Float := Float'Rounding(Ya);
 		x2 : Float := Float'Rounding(Xb);
 		y2 : Float := Float'Rounding(Yb);
-		e,deltx, delty, coefx, coefy : Float;		
-
+		e: Float;		
 	begin
 
 		-- Clipping lines : Liang-Barsky Algorithm 
-
+		-- http://myweb.lmu.edu/dondi/share/cg/clipping.pdf
 
 		-- sort points by X
 		-- P1 will be always at left
@@ -55,15 +62,18 @@ package body Ligne is
             y2 := e;
         end if;
 
-		--		            Put(x1);Put(y1);Put(x2);Put(y2);New_Line;
-
-		-- http://myweb.lmu.edu/dondi/share/cg/clipping.pdf
 		declare
-			u1 : Float := 0.0;
 			dx : Float := x2 - x1 ;
-			u2 : Float := 1.0 ;
 			dy : Float := y2 - y1;
+			-- global local variables
+			-- indicate the relative begin and end
+			-- of the cut line
+			u1 : Float := 0.0;
+			u2 : Float := 1.0 ;
 
+			-- test if the line intersect screen borders
+			-- return if line is in hidden area
+			-- update the 'global local' variables u1 and u2
 			function Reject(C, q : Float) return Boolean is
 				u : Float := q / C;
 			begin
@@ -114,19 +124,17 @@ package body Ligne is
 			end if;
 		end;
 
-		--		            Put(x1);Put(y1);Put(x2);Put(y2);New_Line;
-
-        internDrawLineLumZ(
-			Integer(x1),
-			Integer(y1),
-			Za,
-			Integer(x2),
-			Integer(y2),
-			Zb,
-			Val);
+		-- draw the cut line
+        internDrawLineLumZ(Integer(x1), Integer(y1), Za,
+			Integer(x2), Integer(y2), Zb, Val);
 	end;
 
 
+	-- Draw a 2d segment on screen
+	-- The line MUST BE INTO the screen
+	-- with valid positions
+	--code entierement repris de wikipedia
+	--https://fr.wikipedia.org/wiki/Algorithme_de_trac%C3%A9_de_segment_de_Bresenham#Algorithme_g.C3.A9n.C3.A9ral_optimis.C3.A9
     procedure internDrawLineLumZ(Xa, Ya : Integer ; Za : Float ; Xb, Yb : Integer ; Zb : Float ; Val : PixLum) is
 		dx, dy : Integer;
 		dz : Float;
