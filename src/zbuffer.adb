@@ -1,9 +1,9 @@
 
 package body ZBuffer is
-	Xmin : Integer := Dessin.Pixel_X'First;
-	Xmax : Integer := Dessin.Pixel_X'Last;
-	Ymin : Integer := Dessin.Pixel_Y'First;
-    Ymax : Integer := Dessin.Pixel_Y'Last;
+	Xmin : constant Integer := Dessin.Pixel_X'First;
+	Xmax : constant Integer := Dessin.Pixel_X'Last;
+	Ymin : constant Integer := Dessin.Pixel_Y'First;
+    Ymax : constant Integer := Dessin.Pixel_Y'Last;
 	
 	buffer : array (Xmin..Xmax, Ymin..Ymax) of Float;
 
@@ -18,17 +18,15 @@ package body ZBuffer is
 	end;
 
 	-- Draw a pixel on screen (does not occlude nearest pixel)
-	-- Can be called with an invalid position
-	procedure DrawPixel(X, Y : Integer ; Z : Float ; V : PixLum) is
-		D : Float := Z;
+    -- MUST NOT be called with an invalid position
+    -- Z : depth of the pixel to draw
+    procedure DrawPixel(X, Y : Integer ; Z : Float ; V : PixLum) is
 	begin
-		if X >= Xmin and then X <= Xmax and then Y >= Ymin and then Y <= Ymax then
-			-- Test if the current pixel is nearer than the older pixel
-			if buffer(X, Y) > Z then
-				-- Update the depth of the pixel
-				buffer(X, Y) := Z;
-				Dessin.Fixe_Pixel(X, Y, V);
-			end if;
+		-- Test if the current pixel is nearer than the older pixel
+		if buffer(X, Y) > Z then
+			-- Update the depth of the pixel
+			buffer(X, Y) := Z;
+			Dessin.Fixe_Pixel(X, Y, V);
 		end if;
 	end;
 

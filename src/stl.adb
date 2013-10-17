@@ -100,9 +100,6 @@ package body STL is
 						if Word= "facet" then 
 							Current := Vertex_1;
         					NouvelleFace := new TFacette;
-							NouvelleFace.Next := List.FirstElt;
-							List.FirstElt := NouvelleFace;
-							List.NbElt := List.NbElt + 1;
 						end if;
 					when Vertex_1 =>
 						if Word = "vertex" then
@@ -111,6 +108,8 @@ package body STL is
 								Float'Value(Get_Next_Word(F)),
 								Float'Value(Get_Next_Word(F)));
 							Current := Vertex_2;
+                        elsif Word = "endfacet" then -- malformed face
+                            raise Data_Error;
 						end if;
 					when Vertex_2 =>
 						if Word = "vertex" then
@@ -119,6 +118,8 @@ package body STL is
 								Float'Value(Get_Next_Word(F)),
 								Float'Value(Get_Next_Word(F)));
 							Current := Vertex_3;
+                        elsif Word = "endfacet" then -- malformed face
+                            raise Data_Error;
 						end if;
 					when Vertex_3 =>
 						if Word = "vertex" then
@@ -128,8 +129,18 @@ package body STL is
 								Float'Value(Get_Next_Word(F)));
 							Current := Main;
 							FinalizeFace(NouvelleFace.face);
+							NouvelleFace.Next := List.FirstElt;
+							List.FirstElt := NouvelleFace;
+							List.NbElt := List.NbElt + 1;
+                        elsif Word = "endfacet" then -- malformed face
+                            raise Data_Error;
 						end if;
 				end case;
+            exception
+                when Data_Error =>
+					Current := Main;
+                    Put_Line(Standard_Error, 
+                        "STL file is malformed : found invalid face");
 			end;
 		end loop;
 		Close (F);
