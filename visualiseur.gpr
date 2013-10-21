@@ -3,8 +3,8 @@ with "adasdl.gpr";
 project viewer is
 
    for Main use ("visualiseur.adb");
-   for Source_Dirs use (".");
-   for Object_Dir use "../obj";
+   for Source_Dirs use ("./src");
+   for Object_Dir use "./obj";
 
    package Ide is
       for Vcs_Kind use "Auto";
