@@ -3,7 +3,7 @@ with ZBuffer; use ZBuffer;
 with Algebre; use Algebre;
 
 -- Advanced draw tools
-package Adv_Draw is
+package Triangle is
 
 	-- Draw a 2D filled triangle
 	-- A, B, C : Screen coordinates of the vertices

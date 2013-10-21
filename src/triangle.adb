@@ -1,7 +1,7 @@
 with ZBuffer; use ZBuffer;
 with Algebre; use Algebre;
 
-package body Adv_Draw is
+package body Triangle is
 
 
 	-- Compute an intermediate result

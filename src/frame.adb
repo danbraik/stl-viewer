@@ -12,7 +12,7 @@ with Ada.Float_Text_IO; use Ada.Float_Text_IO;
 with Ada.Numerics.Elementary_Functions; use Ada.Numerics.Elementary_Functions;
 
 with ZBuffer; use ZBuffer;
-with Adv_Draw; use Adv_Draw;
+with Triangle; use Triangle;
 
 package body Frame is
 
