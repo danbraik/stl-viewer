@@ -14,11 +14,14 @@ procedure Test_stl is
 	f : Facette;
 begin
 	
+	-- Load a model
 	m := Chargement(Argument(1));
     
-	Put("Nb face : ");Put(m'Length);
+	-- Print number of faces
+	Put("Face count : ");Put(m'Length);
 	New_Line;
 
+	-- for each face, print vertices
 	for I in m'Range loop
 		f := m(I);
 		New_Line;

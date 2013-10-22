@@ -122,9 +122,7 @@ package body Algebre is
         P, D : Vecteur(1..3);
 	begin
 		-- calculates point coo relative the camera center
-        P := (  A(1) - C(1), 
-                A(2) - C(2),
-                A(3) - C(3) );
+        P := A - C;
 
 		-- calc point coo in the camera system
         D := T * P;
