@@ -12,7 +12,6 @@ package body Ligne is
     Ymin : constant Float := Float(Dessin.Pixel_Y'First);
     Ymax : constant Float := Float(Dessin.Pixel_Y'Last);
 
-
 	-- private procedure
 	-- Draw a 2d segment on screen
 	-- The line MUST BE INTO the screen
@@ -38,30 +37,16 @@ package body Ligne is
     end;
 
 
-
 	-- Draw a colored 2D line on screen with depth
     procedure Tracer_Segment_LumVar_Z(Xa, Ya, Za, Xb, Yb, Zb : Float; Val : PixLum) is
 		x1 : Float := Float'Rounding(Xa);
 		y1 : Float := Float'Rounding(Ya);
 		x2 : Float := Float'Rounding(Xb);
 		y2 : Float := Float'Rounding(Yb);
-		e: Float;		
 	begin
 
 		-- Clipping lines : Liang-Barsky Algorithm 
 		-- http://myweb.lmu.edu/dondi/share/cg/clipping.pdf
-
-		-- sort points by X
-		-- P1 will be always at left
-        if x1 > x2 then
-            e := x1;
-            x1 := x2;
-            x2 := e;
-            e := y1;
-            y1 := y2;
-            y2 := e;
-        end if;
-
 		declare
 			dx : Float := x2 - x1 ;
 			dy : Float := y2 - y1;
