@@ -74,38 +74,39 @@
 
 %%%%%%%%%%
 % TITRE DU DOCUMENT
-
-
 %%%%%%%
 
 \begin{document}
 
-\begin{center} Compte rendu du projet d'algorithmique 1 : Visualiseur 3D \end{center}
-\begin{center} (équipe Teide 105) Baptiste JOSI, Daniel BRAIKEH \end{center}
+\begin{center} 
+	\textbf{Compte rendu du projet d'algorithmique 1 : Visualiseur 3D} \\
+	\textbf{(équipe Teide 105) Baptiste JOSI, Daniel BRAIKEH} \\
+	Octobre 2013
+\end{center}
 
 
-Le projet consistait en la réalisation d'un logiciel capable d'afficher en perspective les données 3D issues d'un fichier STL.
+Le projet consistait en la réalisation d'un logiciel capable d'afficher en perspective les données 3D issues d'un fichier STL.
 La version proposée est capable d'afficher le modèle en fils de fer, en triangles pleins, avec plusieurs gestions de la luminosité, et l'affichage des normales. Les fichiers binaires et ASCII sont également supportés.
 
 
 \section{Implémentation}
 
 \subsection{Implémentation du paquetage {\tt STL}}
-Le paquetage {\tt STL} propose une unique fonction de chargement, qui détermine seule le type réel du fichier passé en argument. Ainsi, on est capable de charger un fichier STL Ascii et STL binaire. Afin d'optimiser le chargement ASCII, le parcours du fichier n'est effectué qu'une seule fois. Pour cela, les facettes sont enregistrées dans une structure de donnée de type liste chaînée. Afin de garder une homogénéité avec le reste du programme, la liste est convertie en tableau. Pour le chargement binaire, la solution est plus simple, en effet, le début du fichier indique le nombre de faces à charger.
-Le chargement Ascii réalise le modèle d'une machine séquentielle permettant d'obtenir mot après mot. Grâce à des états, nous pouvons charger les différents sommets des faces et même gérer les faces incomplètes. Enfin, les normales des faces sont recalculées à partir des sommets.
+Le paquetage {\tt STL} propose une unique fonction de chargement, qui détermine seule le type réel du fichier passé en argument. Ainsi, on est capable de charger un fichier STL ASCII et STL binaire. Afin d'optimiser le chargement ASCII, le parcours du fichier n'est effectué qu'une seule fois. Pour cela, les facettes sont enregistrées dans une structure de donnée de type liste chaînée. Afin de garder une homogénéité avec le reste du programme, la liste est convertie en tableau. Pour le chargement binaire, la solution est plus simple, en effet, le début du fichier indique le nombre de faces à charger.
+Le chargement ASCII réalise le modèle d'une machine séquentielle permettant d'obtenir mot après mot. Grâce à des états, nous pouvons charger les différents sommets des faces et même gérer les faces incomplètes. Enfin, les normales des faces sont recalculées à partir des sommets.
 
 \subsection{Implémentation du paquetage {\tt Algebre}}
 Le paquetage {\tt Algebre} regroupe les fonctions de rotation de matrices, de produit entre matrices et vecteurs, de produit vectoriel, d'addition et soustraction de vecteurs, de normalisation de vecteur. Nous avons pour cela utilisé la surcharge d'opérateurs.
-Le paquetage contient aussi la fonction de projection, qui à partir de d'un point avec coordonées 3D, retourne le point projeté dont les coordonnées sont celles à l'écran.
+Le paquetage contient aussi la fonction de projection, qui à partir de d'un point avec coordonées 3D, retourne le point projeté dont les coordonnées sont celles à l'écran (Elle retourne également la profondeur du point, utilisée plus tard).
 
 \subsection{Implémentation du paquetage {\tt Scene}}
 Le paquetage {\tt Scene} gère les éléments de la scène, à savoir la caméra (sa position, son orientation), et le modèle appelé maillage.
-Après modification de l'orientation de la caméra, suite aux actions de l'utilisateur, les différentes matrices de rotation sont remises à jour.
+Seulement après modification de l'orientation de la caméra, suite aux actions de l'utilisateur, les différentes matrices de rotation sont remises à jour.
 
 \subsection{Implémentation du paquetage {\tt Ligne}}
 Ce paquetage propose plusieurs algorithmes de tracé de ligne qui ne sont en réalité que des variantes du tracé fourni au départ.
 Afin d'optimiser le nombre de pixels à dessiner, on cherche à ne dessiner que ceux étant situés à l'intérieur de l'écran.
-Pour cela on utilise un algorithme de "clipping" : Liang-Barsky. Cet algorithme calculeth les intersections entre la ligne à dessiner et les bords de l'écran afin d'obtenir la portion visible de la ligne.
+Pour cela on utilise un algorithme de "clipping" : Liang-Barsky. Cet algorithme calcule les intersections entre la ligne à dessiner et les bords de l'écran afin d'obtenir la portion visible de la ligne.
 
 \subsection{Implémentation du paquetage {\tt Triangle}}
 Ce nouveau paquetage propose une procédure de dessin de triangle plein. Pour cela, on utilise la méthode des coordonnées baricentriques.
@@ -117,11 +118,9 @@ Ce nouveau paquetage est un intermédiaire entre les algorithmes de tracé ({\tt
 et le paquetage de dessin ({\tt Dessin}). Il permet de gérer la profondeur des pixels et d'obtenir un effet réaliste, une face arrière ne pouvant pas écraser une face plus en avant.
 On utilise simplement un tableau qui associe à chaque pixel la profondeur du pixel actuellement dessiné. Avant de redessiner le pixel, on teste s'il est devant ou non le pixel déjà inscrit.
 
-\subsection{Implémentation du paquetage {\tt Params}}
-Ce paquetage gère les paramètres globaux pour la configuration de l'affichage.
-
 \subsection{Implémentation du paquetage {\tt Frame}}
-Le calcul de la frame se déroule de la façon suivante : on efface l'écran, le tampon de profondeur. Pour chaque facette, on projette les points, et on vérifie qu'au moins un des points soit visible. Si le paramètre de luminosité est activé, on calcul la luminosité de la face, puis on affiche éventuellement la normale, enfin on dessine le triangle ou trois lignes suivant le mode de rendu.
+Le calcul de la frame se déroule de la façon suivante : on efface l'écran, le tampon de profondeur. Pour chaque facette, on projette les points, et on vérifie qu'au moins un des points soit visible. Si le paramètre de luminosité est activé, on calcul la luminosité de la face, puis on affiche éventuellement la normale, enfin on dessine le triangle ou trois lignes suivant le mode de rendu. \\
+Les paramètres globaux pour la configuration de l'affichage sont regroupés dans le paquetage {\tt Params}.
 
 
 % Fin implémentation ***************************************************
@@ -132,7 +131,8 @@ Le calcul de la frame se déroule de la façon suivante : on efface l'écran, le
 
 \subsection{Test du paquetage {\tt STL}}
 
-Le programme de test du paquetage est \verb!test_stl.adb!. Il permet de charger un fichier et d'afficher le nombre de facettes lues ainsi que les coordonnées des sommets.
+Le programme de test du paquetage est \verb!test_stl.adb!. Il permet de charger un fichier, spécifié en tant que premier argument, et d'afficher le nombre de facettes lues ainsi que les coordonnées des sommets. Cela facilite grandement le déboguage de la procédure de chargement.\\
+Si le fichier est mal formé (faces incomplètes par exemple), un message d'erreur est affiché à l'utilisateur.
 
 \subsection{Test du paquetage {\tt Algebre}}
 Le programme de test du paquetage est \verb!test_algebre.adb!. Il permet d'effectuer quelques opérations sur les matrices et vecteurs et de s'assurer que les résultats sont cohérents.
@@ -140,8 +140,9 @@ Le programme de test du paquetage est \verb!test_algebre.adb!. Il permet d'effec
 
 \subsection{Test du programme}
 
-Afin de tester le programme, nous avons plusieurs modèles à notre disposition tels q'un cube permettant de s'assurer que les primitives sont bien rendues ; une soucoupe volante permettant de tester la performance avec de nombreuses faces ; ainsi que Suzanne, une tête de singe, mascotte du logiciel de modélisation 3D Blender.
+Afin de tester le programme, nous avons plusieurs modèles à notre disposition tels q'un cube permettant de s'assurer que les primitives sont bien rendues ; une soucoupe volante permettant de tester la performance avec de nombreuses faces ; ainsi que Suzanne, une tête de singe, mascotte du logiciel de modélisation 3D Blender, qui nous permet de tester le rendu plein et les différentes luminosités.
 
+% Bibliographie ********************************************************
 
 \section{Bibliographie}
 
