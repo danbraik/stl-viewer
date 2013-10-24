@@ -14,16 +14,19 @@ with Ada.Float_Text_IO;
 with Ada.Streams.Stream_IO;
 with Interfaces; use Interfaces;
 with Algebre; use Algebre;
+with Ada.Unchecked_Deallocation;
 
 package body STL is
 
 	-- Node of a linked list
 	-- Contains a face and an access to the next Node	
+	type TFacette;
+    type Acc_TFacette is access TFacette;
+
     type TFacette is record
 		face : Facette;
-        next : access TFacette;
+        next : Acc_TFacette;
     end record;
-	type Acc_TFacette is access TFacette;
 
 	-- Linked List of face
 	type ListTF is record
@@ -33,6 +36,9 @@ package body STL is
 		NbElt : Natural;
 	end record;
 
+
+    -- Deallocate useless node
+    procedure FreeTFacette is new Ada.Unchecked_Deallocation(TFacette, Acc_TFacette);
 
 	-- Complete face data : compute the normal
 	procedure FinalizeFace(face : in out Facette) is
@@ -82,7 +88,7 @@ package body STL is
 		F : Ada.Text_IO.File_Type;
         NouvelleFace : Acc_TFacette;
 		List : ListTF;
-		Iterator : access TFacette;
+		Iterator, OldIt : Acc_TFacette;
 		Count : Natural;
 	begin
 
@@ -161,7 +167,9 @@ package body STL is
 			M(Count) := Iterator.face;
 
 			Count := Count - 1;
-			Iterator := Iterator.Next; 
+            OldIt := Iterator;
+			Iterator := Iterator.Next;
+            FreeTFacette(OldIt);
 		end loop;
 
 	end;
