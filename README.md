@@ -23,3 +23,5 @@ To execute :
 ./visualiseur ./stl/monkey_smooth.stl
 
 
+
+<img src="https://raw.github.com/danbraik/stl-viewer/master/screen.png"/>
